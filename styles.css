@@ -142,3 +142,10 @@ body{background:#071426;color:#eaf1f8}
 .urgent-nav{color:#ff9ba1!important}
 .urgent-nav span{color:#ff5965!important}
 @media(max-width:720px){.identity-banner{grid-template-columns:minmax(0,1fr) 112px;gap:10px;min-height:175px;padding:19px 15px;margin:15px 0 18px;border-radius:13px}.banner-copy h2{font-size:25px}.banner-copy p{font-size:11px;max-width:230px}.banner-kicker{font-size:9px}.banner-tags{gap:5px;margin-top:12px}.banner-tags span{font-size:9px;padding:4px 8px}.syrian-flag{width:108px;border-radius:4px}.flag-caption{font-size:9px}.flag-glow{width:100px;height:65px}.world-map-art{opacity:.38}}
+
+
+/* Cleaner, dignified Syrian flag presentation */
+.syrian-flag{transform:none;width:min(100%,226px);aspect-ratio:3/2;border-radius:5px;box-shadow:0 10px 26px #0008,0 0 0 1px #ffffff35;object-fit:cover}
+.flag-glow{background:#16b9a522;filter:blur(32px)}
+.flag-caption{color:#d8e5ee;letter-spacing:.1px}
+@media(max-width:720px){.syrian-flag{width:108px;transform:none}}
