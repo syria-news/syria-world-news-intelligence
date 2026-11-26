@@ -64,6 +64,7 @@ module.exports = async (req, res) => {
           description: description.slice(0, 420),
           url: item.link || '',
           source: item.creator || item.source?.name || 'Google News',
+          sourceLinks: [{ name: item.creator || item.source?.name || 'Google News', url: item.link || '' }],
           publishedAt: item.isoDate || item.pubDate || null,
           country: country.id,
           countryName: country.name,
@@ -74,12 +75,31 @@ module.exports = async (req, res) => {
     }));
 
     const articles = results.flatMap(r => r.status === 'fulfilled' ? r.value : []);
-    const seen = new Set();
-    const unique = articles.filter(a => {
-      const key = a.title.toLowerCase().replace(/[^\p{L}\p{N}]/gu, '').slice(0, 100);
-      if (!key || seen.has(key)) return false;
-      seen.add(key); return true;
-    }).sort((a, b) => new Date(b.publishedAt || 0) - new Date(a.publishedAt || 0));
+    // Merge exact-title duplicates instead of silently dropping secondary source links.
+    const merged = new Map();
+    for (const article of articles) {
+      const key = (article.title || '').toLowerCase()
+        .normalize('NFKC')
+        .replace(/[\u064B-\u065F\u0670]/g, '')
+        .replace(/ـ/g, '')
+        .replace(/[^\p{L}\p{N}]/gu, '')
+        .trim();
+      if (!key) continue;
+      const existing = merged.get(key);
+      if (!existing) {
+        merged.set(key, { ...article, sourceLinks: [...(article.sourceLinks || [])] });
+        continue;
+      }
+      const known = new Set(existing.sourceLinks.map(link => link.url).filter(Boolean));
+      for (const link of (article.sourceLinks || [])) {
+        if (link.url && !known.has(link.url)) existing.sourceLinks.push(link);
+      }
+      if (new Date(article.publishedAt || 0) > new Date(existing.publishedAt || 0)) {
+        existing.publishedAt = article.publishedAt;
+      }
+    }
+    const unique = [...merged.values()]
+      .sort((a, b) => new Date(b.publishedAt || 0) - new Date(a.publishedAt || 0));
 
     return res.status(200).json({
       articles: unique,
