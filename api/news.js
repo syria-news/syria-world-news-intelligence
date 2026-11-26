@@ -1,0 +1,95 @@
+const Parser = require('rss-parser');
+const parser = new Parser({
+  timeout: 12000,
+  headers: { 'User-Agent': 'SyriaNewsIntelligence/1.0 (+news monitoring)' }
+});
+
+const WATCHLIST = [
+  { id: 'syria', name: 'سوريا', query: 'سوريا OR دمشق OR حلب OR إدلب OR الحسكة' },
+  { id: 'turkey', name: 'تركيا', query: 'تركيا OR أنقرة OR إسطنبول AND (سياسة OR سوريا OR خارجية)' },
+  { id: 'usa', name: 'الولايات المتحدة', query: 'الولايات المتحدة OR واشنطن OR البيت الأبيض AND (سوريا OR الشرق الأوسط)' },
+  { id: 'russia', name: 'روسيا', query: 'روسيا OR موسكو AND (سوريا OR أوكرانيا OR الخارجية)' },
+  { id: 'un', name: 'الأمم المتحدة', query: 'الأمم المتحدة OR مجلس الأمن OR الأمم المتحدة سوريا' },
+  { id: 'iran', name: 'إيران', query: 'إيران OR طهران AND (سوريا OR إسرائيل OR المنطقة)' },
+  { id: 'israel', name: 'إسرائيل', query: 'إسرائيل OR تل أبيب AND (سوريا OR لبنان OR إيران)' },
+  { id: 'lebanon', name: 'لبنان', query: 'لبنان OR بيروت AND (سياسة OR أمن OR إسرائيل)' }
+];
+
+function classify(text) {
+  const t = (text || '').toLowerCase();
+  const rules = [
+    ['عسكري', /اشتباك|قصف|غارة|هجوم|جبهة|قوات|جيش|عسكري|صاروخ|مسيرة|مسيّرة|احتلال|انسحاب|military|strike|airstrike|troops/],
+    ['أمني', /أمن|أمني|اعتقال|اغتيال|تفجير|انفجار|مخدرات|جريمة|شرطة|security|arrest|bomb|explosion/],
+    ['دبلوماسي', /مباحثات|لقاء|اجتماع|زيارة|مفاوضات|اتفاق|سفير|دبلوماسي|diplomatic|talks|meeting|envoy/],
+    ['اقتصادي', /اقتصاد|اقتصادي|تجارة|استثمار|عملة|ليرة|دولار|ميزانية|مصرف|بنك|economic|economy|trade|investment/],
+    ['طاقة', /نفط|غاز|كهرباء|طاقة|وقود|مصفاة|energy|oil|gas|electricity/],
+    ['إنساني', /إنساني|نازح|لاجئ|مساعدات|غذاء|صحة|مستشفى|ضحايا مدنيون|humanitarian|refugee|displaced|aid/]
+  ];
+  for (const [name, re] of rules) if (re.test(t)) return name;
+  if (/تصريح|قال|أعلن|بيان|رئيس|وزير|حكومة|برلمان|انتخابات|سياسي|politic|president|minister/.test(t)) return 'سياسي';
+  return 'عام';
+}
+
+function importance(text) {
+  const t = (text || '').toLowerCase();
+  if (/عاجل|فوري|الآن|انفجار|اغتيال|هجوم واسع|بدء عملية|urgent|breaking/.test(t)) return 'عاجل';
+  if (/مصدر مسؤول|الرئيس|وزير الخارجية|مجلس الأمن|اتفاق|مفاوضات|قرار|بيان رسمي|اجتماع|قالت وزارة|أعلنت وزارة/.test(t)) return 'مهم';
+  return 'عادي';
+}
+
+function cleanHtml(value = '') {
+  return String(value).replace(/<[^>]*>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&#39;/g, "'").replace(/&quot;/g, '"').replace(/\s+/g, ' ').trim();
+}
+
+module.exports = async (req, res) => {
+  res.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate=600');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
+
+  const selected = typeof req.query.country === 'string' ? req.query.country : '';
+  const targets = selected ? WATCHLIST.filter(x => x.id === selected) : WATCHLIST;
+  try {
+    const results = await Promise.allSettled(targets.map(async country => {
+      const url = 'https://news.google.com/rss/search?' + new URLSearchParams({
+        q: country.query, hl: 'ar', gl: 'TR', ceid: 'TR:ar'
+      }).toString();
+      const feed = await parser.parseURL(url);
+      return (feed.items || []).map(item => {
+        const title = cleanHtml(item.title || '');
+        const description = cleanHtml(item.contentSnippet || item.content || item.summary || '');
+        const combined = `${title} ${description}`;
+        return {
+          id: `${country.id}-${Buffer.from(item.link || title).toString('base64').replace(/[^a-z0-9]/gi, '').slice(0, 24)}`,
+          title,
+          description: description.slice(0, 420),
+          url: item.link || '',
+          source: item.creator || item.source?.name || 'Google News',
+          publishedAt: item.isoDate || item.pubDate || null,
+          country: country.id,
+          countryName: country.name,
+          category: classify(combined),
+          importance: importance(combined)
+        };
+      });
+    }));
+
+    const articles = results.flatMap(r => r.status === 'fulfilled' ? r.value : []);
+    const seen = new Set();
+    const unique = articles.filter(a => {
+      const key = a.title.toLowerCase().replace(/[^\p{L}\p{N}]/gu, '').slice(0, 100);
+      if (!key || seen.has(key)) return false;
+      seen.add(key); return true;
+    }).sort((a, b) => new Date(b.publishedAt || 0) - new Date(a.publishedAt || 0));
+
+    return res.status(200).json({
+      articles: unique,
+      updatedAt: new Date().toISOString(),
+      countries: WATCHLIST.map(({ id, name }) => ({ id, name })),
+      total: unique.length,
+      failedFeeds: results.filter(r => r.status === 'rejected').length,
+      note: 'التصنيف والأهمية آليان أوليان، ولا يمثلان تحققاً تحريرياً مستقلاً.'
+    });
+  } catch (error) {
+    return res.status(502).json({ error: 'تعذر جلب الأخبار حالياً', details: error.message });
+  }
+};

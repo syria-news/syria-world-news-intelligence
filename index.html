@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#101b2b" />
+  <meta name="description" content="منصة رصد إخباري لغرفة الأخبار: سوريا والعالم" />
+  <title>مرصد | Syria News Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-mark">م</div><div><strong>مَرصد</strong><span>NEWS INTELLIGENCE</span></div></div>
+      <div class="side-label">مساحة العمل</div>
+      <button class="nav active" data-view="all"><span>▦</span> موجز الأخبار <b id="side-count">—</b></button>
+      <button class="nav" data-view="urgent"><span>◉</span> عاجل ومهم</button>
+      <button class="nav" data-view="saved"><span>☆</span> المحفوظات</button>
+      <div class="side-label countries-label">نطاق الرصد</div>
+      <div id="country-list" class="country-list"><div class="skeleton-line"></div><div class="skeleton-line"></div></div>
+      <div class="sidebar-foot"><span class="live-dot"></span> مصادر RSS مباشرة<br><small>التحديث كل 5 دقائق تقريباً</small></div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div><div class="eyebrow">غرفة الأخبار / الرصد والمتابعة</div><h1 id="page-title">موجز الأخبار</h1></div>
+        <div class="top-actions"><span class="date-chip" id="today-label">اليوم</span><button id="refresh" class="refresh-btn"><span>↻</span> تحديث الرصد</button></div>
+      </header>
+
+      <section class="welcome-row">
+        <div><h2>صورة أوضح للمشهد.</h2><p>تابع التطورات السياسية والميدانية والدبلوماسية والاقتصادية من مكان واحد.</p></div>
+        <div class="last-update"><span class="live-dot"></span><span id="updated-label">بانتظار جلب الأخبار</span></div>
+      </section>
+
+      <section class="stats-grid">
+        <article class="stat-card"><span>إجمالي المواد</span><strong id="stat-total">—</strong><small>ضمن نتائج الرصد الحالية</small></article>
+        <article class="stat-card urgent-stat"><span>أخبار عاجلة</span><strong id="stat-urgent">—</strong><small>تحتاج مراجعة سريعة</small></article>
+        <article class="stat-card"><span>أخبار مهمة</span><strong id="stat-important">—</strong><small>تصريحات وتطورات بارزة</small></article>
+        <article class="stat-card"><span>الدول والجهات</span><strong>08</strong><small>ضمن قائمة المتابعة</small></article>
+      </section>
+
+      <section class="toolbar">
+        <div class="search-wrap"><span>⌕</span><input id="search" type="search" placeholder="ابحث في العناوين والوصف والمصادر..." /></div>
+        <select id="category-filter" aria-label="التصنيف"><option value="all">كل التصنيفات</option><option>سياسي</option><option>عسكري</option><option>أمني</option><option>دبلوماسي</option><option>اقتصادي</option><option>طاقة</option><option>إنساني</option><option>عام</option></select>
+        <select id="importance-filter" aria-label="الأهمية"><option value="all">كل مستويات الأهمية</option><option>عاجل</option><option>مهم</option><option>عادي</option></select>
+        <select id="sort-filter" aria-label="الترتيب"><option value="new">الأحدث أولاً</option><option value="priority">الأهمية أولاً</option></select>
+      </section>
+
+      <div class="section-heading"><div><h3 id="results-title">آخر التطورات</h3><span id="results-subtitle">الأخبار الواردة من مصادر الرصد</span></div><span id="results-count" class="results-count">— مادة</span></div>
+      <div id="status" class="status-message">جارٍ الاتصال بمصادر الأخبار...</div>
+      <section id="news-list" class="news-list" aria-live="polite"></section>
+      <footer class="disclaimer"><strong>تنبيه تحريري:</strong> هذه نسخة أولية تجمع عناوين ومقتطفات من خلاصات RSS. التصنيف وتقدير الأهمية آليان وأوليان، ولا يشكلان تحققاً مستقلاً. يجب فتح الرابط الأصلي والتحقق من الخبر ومصدره قبل استخدامه على الهواء.</footer>
+    </main>
+  </div>
+  <script src="/app.js" defer></script>
+</body>
+</html>
