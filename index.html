@@ -61,11 +61,25 @@
       </div>
       <div class="banner-flag-wrap">
         <div class="flag-glow"></div>
-        <svg class="syrian-flag" viewBox="0 0 300 190" role="img" aria-label="علم سوريا: أخضر وأبيض وأسود وثلاث نجمات حمراء">
-          <rect width="300" height="63.34" fill="#007A3D"/>
-          <rect y="63.33" width="300" height="63.34" fill="#fff"/>
-          <rect y="126.66" width="300" height="63.34" fill="#000"/>
-          <g fill="#CE1126"><path d="M54 79l5.5 16.5H77L63 105l5.5 16.5L54 111.5l-14.5 10L45 105 31 95.5h17.5z"/><path d="M150 79l5.5 16.5H173L159 105l5.5 16.5L150 111.5l-14.5 10L141 105l-14-9.5h17.5z"/><path d="M246 79l5.5 16.5H269L255 105l5.5 16.5L246 111.5l-14.5 10L237 105l-14-9.5h17.5z"/></g>
+        <svg class="syrian-flag" viewBox="0 0 300 200" role="img" aria-label="علم سوريا الجديد: ثلاثة أشرطة خضراء وبيضاء وسوداء وثلاث نجمات حمراء">
+          <defs>
+            <clipPath id="flagClip"><rect x="2" y="2" width="296" height="196" rx="5"/></clipPath>
+            <linearGradient id="flagLight" x1="0" y1="0" x2="1" y2=".15"><stop offset="0" stop-color="#000" stop-opacity=".12"/><stop offset=".22" stop-color="#fff" stop-opacity=".13"/><stop offset=".52" stop-color="#000" stop-opacity=".04"/><stop offset=".78" stop-color="#fff" stop-opacity=".1"/><stop offset="1" stop-color="#000" stop-opacity=".1"/></linearGradient>
+            <linearGradient id="flagFold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".12"/><stop offset=".5" stop-color="#000" stop-opacity=".04"/><stop offset="1" stop-color="#000" stop-opacity=".13"/></linearGradient>
+          </defs>
+          <g clip-path="url(#flagClip)">
+            <rect x="2" y="2" width="296" height="65.33" fill="#007A3D"/>
+            <rect x="2" y="67.33" width="296" height="65.34" fill="#fff"/>
+            <rect x="2" y="132.67" width="296" height="65.33" fill="#000"/>
+            <g fill="#CE1126">
+              <path d="M52 82l5.1 15.7h16.5L60.2 107.4l5.1 15.7L52 113.4l-13.3 9.7 5.1-15.7-13.4-9.7h16.5z"/>
+              <path d="M150 82l5.1 15.7h16.5l-13.4 9.7 5.1 15.7-13.3-9.7-13.3 9.7 5.1-15.7-13.4-9.7h16.5z"/>
+              <path d="M248 82l5.1 15.7h16.5l-13.4 9.7 5.1 15.7-13.3-9.7-13.3 9.7 5.1-15.7-13.4-9.7h16.5z"/>
+            </g>
+            <path d="M2 2h296v196H2z" fill="url(#flagLight)"/>
+            <path d="M2 2h296v196H2z" fill="url(#flagFold)" opacity=".42"/>
+          </g>
+          <rect x="2" y="2" width="296" height="196" rx="5" fill="none" stroke="#ffffff" stroke-opacity=".38" stroke-width="2"/>
         </svg>
         <span class="flag-caption">سوريا في قلب المشهد</span>
       </div>
