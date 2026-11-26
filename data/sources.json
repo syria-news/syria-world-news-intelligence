@@ -1,0 +1,114 @@
+{
+  "title": "المصادر الرسمية",
+  "updatedAt": "2026-11-26",
+  "groups": [
+    "مؤسسات الدولة",
+    "الوزارات والهيئات",
+    "الإعلام الرسمي"
+  ],
+  "sources": [
+    {
+      "id": "presidency",
+      "name": "رئاسة الجمهورية",
+      "group": "مؤسسات الدولة",
+      "kind": "جهة رسمية",
+      "description": "البيانات والتصريحات الصادرة عن مؤسسة الرئاسة.",
+      "status": "موثق",
+      "platforms": [
+        {
+          "name": "Telegram",
+          "url": "https://t.me/SyrianPresidency"
+        },
+        {
+          "name": "X",
+          "url": "https://x.com/Presidency_Sy"
+        }
+      ]
+    },
+    {
+      "id": "parliament",
+      "name": "مجلس الشعب",
+      "group": "مؤسسات الدولة",
+      "kind": "مؤسسة تشريعية",
+      "description": "أخبار المجلس والجلسات والقرارات، مع مساحة مستقلة لمتابعة حسابات الأعضاء بعد التحقق منها.",
+      "status": "قيد استكمال الحسابات",
+      "platforms": [],
+      "subsection": {
+        "name": "أعضاء مجلس الشعب",
+        "description": "تُضاف الحسابات الشخصية التي يمكن توثيق صلتها بالعضوية، وتبقى منشوراتها منسوبة لأصحابها لا للمجلس."
+      }
+    },
+    {
+      "id": "central-bank",
+      "name": "مصرف سورية المركزي",
+      "group": "الوزارات والهيئات",
+      "kind": "مؤسسة مالية رسمية",
+      "description": "القرارات النقدية والبيانات المصرفية.",
+      "status": "موثق",
+      "platforms": [
+        {
+          "name": "Telegram",
+          "url": "https://t.me/SyCBOS"
+        },
+        {
+          "name": "الموقع الرسمي",
+          "url": "https://cb.gov.sy"
+        }
+      ]
+    },
+    {
+      "id": "spc",
+      "name": "الشركة السورية للبترول",
+      "group": "الوزارات والهيئات",
+      "kind": "شركة عامة",
+      "description": "بيانات الشركة وأخبار قطاع النفط والغاز.",
+      "status": "موثق جزئياً",
+      "platforms": [
+        {
+          "name": "Telegram",
+          "url": "https://t.me/spc_syr"
+        }
+      ]
+    },
+    {
+      "id": "sana",
+      "name": "وكالة سانا",
+      "group": "الإعلام الرسمي",
+      "kind": "وكالة أنباء",
+      "description": "الأخبار والبيانات والتغطيات المنشورة عبر الوكالة.",
+      "status": "موثق",
+      "platforms": [
+        {
+          "name": "Telegram",
+          "url": "https://t.me/sana_gov"
+        },
+        {
+          "name": "X",
+          "url": "https://x.com/Sana__gov"
+        },
+        {
+          "name": "الموقع",
+          "url": "https://sana.sy"
+        }
+      ]
+    },
+    {
+      "id": "thawra",
+      "name": "صحيفة الثورة السورية",
+      "group": "الإعلام الرسمي",
+      "kind": "وسيلة إعلام",
+      "description": "الأخبار والتقارير المنشورة في الصحيفة.",
+      "status": "موثق جزئياً",
+      "platforms": [
+        {
+          "name": "Telegram",
+          "url": "https://t.me/thawra_sy"
+        },
+        {
+          "name": "X",
+          "url": "https://x.com/althawra_sy"
+        }
+      ]
+    }
+  ]
+}
