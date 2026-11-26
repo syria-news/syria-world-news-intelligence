@@ -1,5 +1,5 @@
 const $ = (id) => document.getElementById(id);
-const state = { articles: [], countries: [], selectedCountry: 'all', view: 'all', saved: new Set(JSON.parse(localStorage.getItem('syria-saved') || '[]')), updatedAt: null };
+const state = { articles: [], countries: [], selectedCountry: 'all', view: 'all', saved: new Set(JSON.parse(localStorage.getItem('syria-saved') || '[]')), updatedAt: null, sources: [] };
 const REFRESH_INTERVAL = 5 * 60 * 1000;
 let lastSuccessfulLoad = 0;
 let isLoading = false;
@@ -40,6 +40,41 @@ function render() {
   $('news-list').innerHTML = list.map(a => `<article class="news-card"><div class="news-main"><div class="meta-row"><span class="pill">${escapeHtml(a.countryName)}</span><span class="pill category">${escapeHtml(a.category)}</span><span class="pill ${a.importance==='عاجل'?'urgent':a.importance==='مهم'?'important':''}">${escapeHtml(a.importance)}</span></div><h4>${escapeHtml(a.title)}</h4>${a.description ? `<p>${escapeHtml(a.description)}</p>` : ''}<div class="news-foot"><span>◷ ${escapeHtml(relativeDate(a.publishedAt))}</span><span>المصدر: ${escapeHtml(a.source || 'غير محدد')}</span></div></div><div class="news-actions"><button class="save-btn ${state.saved.has(a.id)?'saved':''}" data-save="${escapeHtml(a.id)}" title="حفظ الخبر">${state.saved.has(a.id)?'★':'☆'}</button>${a.url?`<a class="source-link" href="${escapeHtml(a.url)}" target="_blank" rel="noopener noreferrer">المصدر الأصلي ↗</a>`:''}</div></article>`).join('');
   document.querySelectorAll('[data-save]').forEach(btn => btn.addEventListener('click', () => { const id=btn.dataset.save; state.saved.has(id)?state.saved.delete(id):state.saved.add(id); localStorage.setItem('syria-saved',JSON.stringify([...state.saved])); render(); }));
 }
+
+function renderSources() {
+  const groups = ['مؤسسات الدولة','الوزارات والهيئات','الإعلام الرسمي'];
+  $('results-title').textContent = 'المصادر الرسمية';
+  $('results-subtitle').textContent = 'دليل الجهات والحسابات التي يجري تجهيزها للرصد';
+  $('results-count').textContent = `${state.sources.length} جهات`;
+  $('status').textContent = 'هذا الدليل ينظم الجهات وحساباتها. ظهور المصدر هنا لا يعني أن جلب منشوراته آلياً أصبح مفعلاً بعد.';
+  $('status').className = 'status-message';
+  $('stat-total').textContent = state.sources.length;
+  $('stat-urgent').textContent = '—';
+  $('stat-important').textContent = '—';
+  $('news-list').innerHTML = groups.map(group => {
+    const items = state.sources.filter(source => source.group === group);
+    if (!items.length) return '';
+    return `<section class="source-group"><div class="source-group-heading"><h3>${escapeHtml(group)}</h3><span>${items.length} جهات</span></div><div class="source-grid">${items.map(source => `
+      <article class="source-card">
+        <div class="source-card-top"><span class="source-kind">${escapeHtml(source.kind)}</span><span class="source-status">${escapeHtml(source.status)}</span></div>
+        <h4>${escapeHtml(source.name)}</h4><p>${escapeHtml(source.description)}</p>
+        ${source.subsection ? `<div class="source-subsection"><strong>${escapeHtml(source.subsection.name)}</strong><span>${escapeHtml(source.subsection.description)}</span></div>` : ''}
+        <div class="source-platforms">${source.platforms.length ? source.platforms.map(platform => `<a href="${escapeHtml(platform.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(platform.name)} ↗</a>`).join('') : '<span class="source-pending">روابط الحسابات قيد التحقق</span>'}</div>
+      </article>`).join('')}</div></section>`;
+  }).join('');
+}
+async function loadSources() {
+  try {
+    const response = await fetch('/data/sources.json');
+    if (!response.ok) throw new Error('تعذر تحميل دليل المصادر');
+    const data = await response.json();
+    state.sources = data.sources || [];
+    if (state.view === 'sources') renderSources();
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 async function loadNews() {
   if (isLoading) return;
   isLoading = true;
@@ -67,12 +102,14 @@ async function loadNews() {
 
 document.querySelectorAll('[data-view]').forEach(btn => btn.addEventListener('click', () => {
   state.view = btn.dataset.view; document.querySelectorAll('[data-view]').forEach(x=>x.classList.toggle('active',x===btn));
-  $('page-title').textContent = state.view==='urgent'?'عاجل ومهم':state.view==='saved'?'المحفوظات':'موجز الأخبار'; render();
+  $('page-title').textContent = state.view==='urgent'?'عاجل ومهم':state.view==='saved'?'المحفوظات':state.view==='sources'?'المصادر الرسمية':'موجز الأخبار';
+  if (state.view === 'sources') renderSources(); else render();
 }));
 ['search','category-filter','importance-filter','sort-filter'].forEach(id => $(id).addEventListener(id==='search'?'input':'change',render));
 $('refresh').addEventListener('click',loadNews);
 $('today-label').textContent = new Intl.DateTimeFormat('ar', { dateStyle: 'full' }).format(new Date());
 loadNews();
+loadSources();
 
 // تحديث تلقائي كل خمس دقائق، مع تجنب الطلبات المتداخلة أثناء انشغال التبويب.
 setInterval(() => {
