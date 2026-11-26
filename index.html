@@ -3,35 +3,48 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#101b2b" />
+  <meta name="theme-color" content="#071426" />
   <meta name="description" content="العين الراصدة — منصة الرصد الإخباري الذكي لغرفة الأخبار" />
-  <title>العين | العين الراصدة</title>
+  <title>العين الراصدة | منصة الرصد الإخباري الذكي</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/styles.css" />
 </head>
 <body>
-  <div class="shell">
-    <aside class="sidebar">
-      <div class="brand"><div class="brand-mark" aria-hidden="true">◉</div><div><strong>العَين</strong><span>العين الراصدة</span></div></div>
-      <div class="side-label">مساحة العمل</div>
-      <button class="nav active" data-view="all"><span>▦</span> موجز الأخبار <b id="side-count">—</b></button>
-      <button class="nav" data-view="urgent"><span>◉</span> عاجل ومهم</button>
-      <button class="nav" data-view="saved"><span>☆</span> المحفوظات</button>
-      <div class="side-label countries-label">نطاق الرصد</div>
-      <div id="country-list" class="country-list"><div class="skeleton-line"></div><div class="skeleton-line"></div></div>
-      <div class="sidebar-foot"><span class="live-dot"></span> مصادر RSS مباشرة<br><small>التحديث كل 5 دقائق تقريباً</small></div>
-    </aside>
+  <div class="site-shell">
+    <header class="masthead">
+      <div class="masthead-tools">
+        <span class="live-indicator"><i></i> رصد مباشر</span>
+        <span class="masthead-caption">غرفة الأخبار · متابعة وتحليل</span>
+      </div>
+      <div class="brand brand-main">
+        <div class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 64 44" role="img" aria-label="رمز العين"><path d="M3 22C12 9 22 3 32 3s20 6 29 19C52 35 42 41 32 41S12 35 3 22Z" fill="none" stroke="currentColor" stroke-width="3.5"/><circle cx="32" cy="22" r="13" fill="none" stroke="#35c8bb" stroke-width="2.5"/><circle cx="32" cy="22" r="6" fill="#35c8bb"/><path d="M32 9v-5M32 40v-5M19 22h-5M50 22h-5" stroke="#35c8bb" stroke-width="2"/></svg>
+        </div>
+        <div class="brand-copy"><strong>العين <em>الراصدة</em></strong><span>حيث تتقاطع الأخبار وتتكشف الصورة</span></div>
+      </div>
+      <div class="masthead-actions">
+        <span class="date-chip" id="today-label">اليوم</span>
+        <button id="refresh" class="refresh-btn"><span>↻</span> تحديث الرصد</button>
+      </div>
+    </header>
+
+    <nav class="main-nav" aria-label="التنقل الرئيسي">
+      <div class="nav-links">
+        <button class="nav active" data-view="all"><span>▦</span> موجز الأخبار <b id="side-count">—</b></button>
+        <button class="nav urgent-nav" data-view="urgent"><span>●</span> عاجل ومهم</button>
+        <button class="nav" data-view="saved"><span>☆</span> المحفوظات</button>
+      </div>
+      <div class="country-area">
+        <span class="country-label">نطاق الرصد</span>
+        <div id="country-list" class="country-list"><div class="skeleton-line"></div><div class="skeleton-line"></div></div>
+      </div>
+    </nav>
 
     <main class="main">
-      <header class="topbar">
-        <div><div class="eyebrow">غرفة الأخبار / الرصد والمتابعة</div><h1 id="page-title">موجز الأخبار</h1></div>
-        <div class="top-actions"><span class="date-chip" id="today-label">اليوم</span><button id="refresh" class="refresh-btn"><span>↻</span> تحديث الرصد</button></div>
-      </header>
-
       <section class="welcome-row">
-        <div><h2>صورة أوضح للمشهد.</h2><p>تابع التطورات السياسية والميدانية والدبلوماسية والاقتصادية من مكان واحد.</p></div>
+        <div><div class="eyebrow">منصة الرصد الإخباري الذكي</div><h1 id="page-title">موجز الأخبار</h1><p>صورة أوضح للمشهد. تابع التطورات السياسية والميدانية والدبلوماسية والاقتصادية من مكان واحد.</p></div>
         <div class="last-update"><span class="live-dot"></span><span id="updated-label">بانتظار جلب الأخبار</span></div>
       </section>
 
@@ -49,11 +62,12 @@
         <select id="sort-filter" aria-label="الترتيب"><option value="new">الأحدث أولاً</option><option value="priority">الأهمية أولاً</option></select>
       </section>
 
-      <div class="section-heading"><div><h3 id="results-title">آخر التطورات</h3><span id="results-subtitle">الأخبار الواردة من مصادر الرصد</span></div><span id="results-count" class="results-count">— مادة</span></div>
+      <div class="section-heading"><div><h2 id="results-title">آخر التطورات</h2><span id="results-subtitle">الأخبار الواردة من مصادر الرصد</span></div><span id="results-count" class="results-count">— مادة</span></div>
       <div id="status" class="status-message">جارٍ الاتصال بمصادر الأخبار...</div>
       <section id="news-list" class="news-list" aria-live="polite"></section>
-      <footer class="disclaimer"><strong>تنبيه تحريري:</strong> هذه نسخة أولية تجمع عناوين ومقتطفات من خلاصات RSS. التصنيف وتقدير الأهمية آليان وأوليان، ولا يشكلان تحققاً مستقلاً. يجب فتح الرابط الأصلي والتحقق من الخبر ومصدره قبل استخدامه على الهواء.</footer>
+      <footer class="disclaimer"><strong>تنبيه تحريري:</strong> هذه المنصة تجمع عناوين ومقتطفات من خلاصات RSS. التصنيف وتقدير الأهمية آليان وأوليان، ولا يشكلان تحققاً مستقلاً. يجب فتح الرابط الأصلي والتحقق من الخبر ومصدره قبل استخدامه على الهواء.</footer>
     </main>
+    <footer class="site-footer"><span>العين الراصدة</span><span>منصة الرصد الإخباري الذكي · التحديث كل 5 دقائق تقريباً</span></footer>
   </div>
   <script src="/app.js" defer></script>
 </body>
