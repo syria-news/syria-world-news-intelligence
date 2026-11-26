@@ -118,3 +118,27 @@ body{background:#071426;color:#eaf1f8}
 .site-footer span:first-child{color:#42c9bb;font-weight:700}
 @media(max-width:1000px){.masthead{grid-template-columns:1fr auto;}.masthead-tools{display:none}.brand-main{grid-column:1;grid-row:1}.masthead-actions{grid-column:2;grid-row:1}.main-nav{align-items:flex-start;flex-direction:column}.country-list{max-width:calc(100vw - 150px)}}
 @media(max-width:720px){.masthead{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;padding:15px}.brand-main{gap:10px}.brand-main .brand-mark{width:54px;height:50px;padding:7px;border-radius:13px}.brand-copy strong{font-size:25px}.brand-copy span{font-size:10px;white-space:normal}.masthead-actions{gap:7px}.masthead .refresh-btn{padding:8px 10px;font-size:11px}.main-nav{padding:10px 12px;gap:9px}.nav-links{width:100%;justify-content:space-between}.main-nav .nav{padding:8px 9px;font-size:11px}.country-area{width:100%;gap:7px}.country-label{white-space:nowrap}.country-list{max-width:calc(100vw - 105px)}.country-btn{font-size:11px;padding:7px 9px}.main{padding:18px 13px}.welcome-row{padding:20px 0 16px;flex-direction:column}.welcome-row h1{font-size:21px}.last-update{font-size:10px}.stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.site-footer{flex-direction:column;gap:5px;padding:14px}.date-chip{display:none}}
+
+
+/* Syria + world-map identity hero */
+.identity-banner{position:relative;isolation:isolate;overflow:hidden;min-height:238px;margin:22px 0 24px;padding:30px clamp(22px,4vw,48px);display:grid;grid-template-columns:minmax(0,1fr) 245px;align-items:center;gap:20px;border:1px solid #24516d;border-radius:18px;background:linear-gradient(105deg,#071629f2 0%,#0c2742eF 55%,#071629f5 100%);box-shadow:0 14px 38px #0004}
+.world-map-art{position:absolute;inset:0;z-index:-1;opacity:.6;pointer-events:none}
+.world-map-art svg{width:100%;height:100%;display:block}
+.identity-banner:after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,#071629b8 0%,transparent 50%,#07162999 100%)}
+.banner-copy{position:relative;z-index:2}
+.banner-kicker{display:inline-flex;align-items:center;gap:8px;color:#7bd9d0;font-size:11px;font-weight:600}
+.banner-kicker i{width:7px;height:7px;background:#36c9b7;border-radius:50%;box-shadow:0 0 0 4px #36c9b722}
+.banner-copy h2{font-size:clamp(30px,4vw,46px);line-height:1.3;color:#f8fbff;margin:10px 0 3px;font-weight:700;letter-spacing:-.5px}
+.banner-copy p{font-size:14px;color:#c1d4e4;margin:0}
+.banner-tags{display:flex;gap:8px;margin-top:17px}
+.banner-tags span{font-size:10px;color:#a9c7d8;border:1px solid #37617b;background:#0e2a43b8;border-radius:20px;padding:5px 12px}
+.banner-flag-wrap{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:10px}
+.syrian-flag{width:min(100%,230px);height:auto;border-radius:7px;box-shadow:0 12px 30px #0009,0 0 0 1px #ffffff25;transform:perspective(500px) rotateY(-8deg) rotateZ(-1deg)}
+.flag-glow{position:absolute;width:210px;height:110px;top:18px;border-radius:50%;background:#16b9a544;filter:blur(38px);z-index:-1}
+.flag-caption{font-size:11px;color:#d2e1eb}
+.banner-orbit{position:absolute;border:1px solid #3ab9d033;border-radius:50%;pointer-events:none;z-index:-1}
+.orbit-one{width:430px;height:430px;left:35%;top:-320px}
+.orbit-two{width:560px;height:560px;left:29%;top:-385px}
+.urgent-nav{color:#ff9ba1!important}
+.urgent-nav span{color:#ff5965!important}
+@media(max-width:720px){.identity-banner{grid-template-columns:minmax(0,1fr) 112px;gap:10px;min-height:175px;padding:19px 15px;margin:15px 0 18px;border-radius:13px}.banner-copy h2{font-size:25px}.banner-copy p{font-size:11px;max-width:230px}.banner-kicker{font-size:9px}.banner-tags{gap:5px;margin-top:12px}.banner-tags span{font-size:9px;padding:4px 8px}.syrian-flag{width:108px;border-radius:4px}.flag-caption{font-size:9px}.flag-glow{width:100px;height:65px}.world-map-art{opacity:.38}}
