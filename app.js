@@ -28,6 +28,7 @@ function getFiltered() {
   return list;
 }
 function render() {
+  if (state.view === 'sources') { renderSources(); return; }
   const list = getFiltered();
   $('stat-total').textContent = state.articles.length;
   $('stat-urgent').textContent = state.articles.filter(a => a.importance === 'عاجل').length;
