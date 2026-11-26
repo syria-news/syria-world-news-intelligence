@@ -1,5 +1,8 @@
 const $ = (id) => document.getElementById(id);
 const state = { articles: [], countries: [], selectedCountry: 'all', view: 'all', saved: new Set(JSON.parse(localStorage.getItem('syria-saved') || '[]')), updatedAt: null };
+const REFRESH_INTERVAL = 5 * 60 * 1000;
+let lastSuccessfulLoad = 0;
+let isLoading = false;
 
 function escapeHtml(value = '') { return String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function relativeDate(value) {
@@ -37,6 +40,8 @@ function render() {
   document.querySelectorAll('[data-save]').forEach(btn => btn.addEventListener('click', () => { const id=btn.dataset.save; state.saved.has(id)?state.saved.delete(id):state.saved.add(id); localStorage.setItem('syria-saved',JSON.stringify([...state.saved])); render(); }));
 }
 async function loadNews() {
+  if (isLoading) return;
+  isLoading = true;
   const refresh = $('refresh'); refresh.disabled = true; refresh.innerHTML = '<span>↻</span> جارٍ التحديث';
   $('status').className = 'status-message'; $('status').textContent = 'جارٍ جلب آخر المواد من خلاصات الأخبار...';
   try {
@@ -49,13 +54,14 @@ async function loadNews() {
       state.articles = [...retained, ...(data.articles || [])].sort((a,b)=>new Date(b.publishedAt||0)-new Date(a.publishedAt||0));
     }
     state.updatedAt = data.updatedAt;
+    lastSuccessfulLoad = Date.now();
     $('updated-label').textContent = `آخر تحديث: ${relativeDate(data.updatedAt)}`;
     $('status').textContent = `${data.total} مادة جرى جمعها. ${data.failedFeeds ? `تعذر الوصول إلى ${data.failedFeeds} من خلاصات الرصد.` : ''} ${data.note || ''}`;
     render();
   } catch (error) {
     $('status').className = 'status-message error'; $('status').textContent = `${error.message}. تحقق من اتصال الموقع أو أعد المحاولة.`;
     if (!state.articles.length) $('news-list').innerHTML = '<div class="empty-state">لم تصل الأخبار بعد. تأكد من تشغيل الموقع على Vercel ثم أعد المحاولة.</div>';
-  } finally { refresh.disabled = false; refresh.innerHTML = '<span>↻</span> تحديث الرصد'; }
+  } finally { refresh.disabled = false; refresh.innerHTML = '<span>↻</span> تحديث الرصد'; isLoading = false; }
 }
 
 document.querySelectorAll('[data-view]').forEach(btn => btn.addEventListener('click', () => {
@@ -66,3 +72,13 @@ document.querySelectorAll('[data-view]').forEach(btn => btn.addEventListener('cl
 $('refresh').addEventListener('click',loadNews);
 $('today-label').textContent = new Intl.DateTimeFormat('ar', { dateStyle: 'full' }).format(new Date());
 loadNews();
+
+// تحديث تلقائي كل خمس دقائق، مع تجنب الطلبات المتداخلة أثناء انشغال التبويب.
+setInterval(() => {
+  if (document.visibilityState === 'visible') loadNews();
+}, REFRESH_INTERVAL);
+
+// عند العودة إلى التبويب، حدّث فوراً إذا مضت خمس دقائق على آخر جلب ناجح.
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && Date.now() - lastSuccessfulLoad >= REFRESH_INTERVAL) loadNews();
+});
