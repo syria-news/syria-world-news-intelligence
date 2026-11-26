@@ -49,3 +49,72 @@ body{background:#0d1726;color:#e8eef6}
 .disclaimer{background:#302a20;border-color:#5a4a30;color:#e4c995}
 .skeleton-line{background:#1d3047}
 @media(max-width:720px){.sidebar{border-left:0;border-bottom:1px solid #29384b}.country-list{scrollbar-color:#405a75 #0b1422}.main{background:#0d1726}}
+
+
+/* Al-Ayn newsroom homepage layout */
+:root{--urgent:#f0444f;--urgent-soft:#ff747c}
+body{background:#071426;color:#eaf1f8}
+.site-shell{min-height:100vh;background:radial-gradient(ellipse at 50% -20%,#173c60 0%,#0a1b30 42%,#071426 78%);position:relative;overflow:hidden}
+.site-shell:before{content:"";position:absolute;inset:0 0 auto;height:210px;pointer-events:none;opacity:.18;background-image:radial-gradient(circle,#48c9d8 1px,transparent 1.8px);background-size:13px 13px;mask-image:linear-gradient(to bottom,#000,transparent)}
+.masthead{position:relative;z-index:1;min-height:138px;padding:22px clamp(18px,4vw,58px);display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:20px;border-bottom:1px solid #24506d;background:linear-gradient(110deg,#071426eF,#0c2038eF 55%,#081729f2)}
+.masthead-tools,.masthead-actions{display:flex;align-items:center;gap:14px}
+.masthead-actions{justify-content:flex-start}
+.masthead-caption,.country-label{font-size:11px;color:#91a9c0}
+.live-indicator{font-size:11px;color:#a9c5d5;white-space:nowrap}
+.live-indicator i{display:inline-block;width:7px;height:7px;border-radius:50%;background:#37cbb5;margin-left:7px;box-shadow:0 0 0 4px #37cbb522}
+.brand-main{display:flex;align-items:center;gap:15px;padding:0}
+.brand-main .brand-mark{width:78px;height:66px;border-radius:18px;background:linear-gradient(145deg,#153b56,#0b2238);border:1px solid #2a7387;box-shadow:0 0 28px #20b8ad25;color:#f4fbff;padding:10px}
+.brand-main .brand-mark svg{width:100%;height:100%}
+.brand-copy strong{display:block;font-size:clamp(26px,3vw,39px);line-height:1.35;color:#f7fbff;white-space:nowrap;font-weight:700}
+.brand-copy em{font-style:normal;color:#39c9bb}
+.brand-copy span{display:block;color:#a8bed1;font-size:12px;margin-top:5px;white-space:nowrap}
+.masthead .date-chip{background:#122b43;border-color:#294a64;color:#bfd1df}
+.masthead .refresh-btn{background:#173b55;border:1px solid #2c6576;color:#f4fbff;padding:11px 16px}
+.main-nav{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:18px;padding:12px clamp(18px,4vw,58px);background:#091a2d;border-bottom:1px solid #24435e;box-shadow:0 8px 24px #0003}
+.nav-links{display:flex;align-items:center;gap:7px}
+.main-nav .nav{width:auto;margin:0;padding:10px 15px;color:#c5d4e2;border:1px solid transparent}
+.main-nav .nav.active{background:#16354e;border-color:#28546c;box-shadow:inset 0 -2px #34c7b8}
+.main-nav .nav b{margin-right:5px;color:#91b5c7}
+.main-nav .urgent-nav{color:#ff9ba1}
+.main-nav .urgent-nav span{color:#ff5965}
+.main-nav .urgent-nav.active{background:#431e2a;border-color:#843541;box-shadow:inset 0 -2px #f0444f}
+.country-area{display:flex;align-items:center;gap:12px;min-width:0}
+.country-list{display:flex;align-items:center;gap:4px;overflow:auto;max-width:min(55vw,760px);scrollbar-width:thin}
+.country-btn{white-space:nowrap;padding:8px 11px;color:#c4d3e0}
+.country-btn.selected{background:#16364e;border:1px solid #28566d}
+.welcome-row{padding:28px 0 22px}
+.welcome-row h1{font-size:25px;color:#f4f8fc;margin:0 0 5px}
+.welcome-row p{color:#a6b8c9}
+.eyebrow{color:#51cabc;letter-spacing:.2px}
+.stats-grid{gap:14px}
+.stat-card{background:linear-gradient(145deg,#142b43,#102238);border-color:#29445f;box-shadow:0 8px 24px #0002}
+.stat-card span{color:#b5c7d7}
+.stat-card strong{color:#f2f7fb}
+.stat-card small{color:#8fa6ba}
+.urgent-stat{border-color:#74323d;background:linear-gradient(145deg,#351d2a,#172337)}
+.urgent-stat span,.urgent-stat strong{color:#ff737c}
+.toolbar{margin-top:24px}
+.search-wrap,.toolbar select{background:#10253b;border-color:#2a455f;color:#dce7f0}
+.search-wrap input{color:#f1f6fa}
+.toolbar select option{background:#10253b}
+.section-heading h2{font-size:17px;margin:0 0 2px;color:#f1f6fa}
+.section-heading span{color:#94aabd}
+.results-count{background:#19364e;color:#d0e0ec;border:1px solid #2b5068}
+.news-card{background:linear-gradient(145deg,#142940,#102135);border-color:#29445e;box-shadow:0 7px 20px #0002}
+.news-card:hover{background:#192f48;border-color:#3c7186}
+.news-card h4{color:#eef5fa}
+.news-card p{color:#a9bac9}
+.news-foot{color:#91a7ba}
+.pill{background:#20384f;color:#c4d4e1}
+.pill.urgent{background:#6b202b;color:#fff0f1;border:1px solid #b83b48;font-weight:700}
+.pill.important{background:#493820;color:#f4cb7c}
+.pill.category{background:#173e40;color:#83dfd2}
+.save-btn{background:#142a40;border-color:#34516b;color:#c2d1df}
+.source-link{color:#55d6c6}
+.status-message{background:#132d45;border-color:#2a4c67;color:#c4d7e6}
+.status-message.error{background:#421f29;border-color:#803742;color:#ffc0c3}
+.disclaimer{background:#28271f;border-color:#625333;color:#e5d19e}
+.site-footer{display:flex;justify-content:space-between;gap:15px;padding:18px clamp(18px,4vw,58px);border-top:1px solid #213e57;color:#819bb1;font-size:11px}
+.site-footer span:first-child{color:#42c9bb;font-weight:700}
+@media(max-width:1000px){.masthead{grid-template-columns:1fr auto;}.masthead-tools{display:none}.brand-main{grid-column:1;grid-row:1}.masthead-actions{grid-column:2;grid-row:1}.main-nav{align-items:flex-start;flex-direction:column}.country-list{max-width:calc(100vw - 150px)}}
+@media(max-width:720px){.masthead{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;padding:15px}.brand-main{gap:10px}.brand-main .brand-mark{width:54px;height:50px;padding:7px;border-radius:13px}.brand-copy strong{font-size:25px}.brand-copy span{font-size:10px;white-space:normal}.masthead-actions{gap:7px}.masthead .refresh-btn{padding:8px 10px;font-size:11px}.main-nav{padding:10px 12px;gap:9px}.nav-links{width:100%;justify-content:space-between}.main-nav .nav{padding:8px 9px;font-size:11px}.country-area{width:100%;gap:7px}.country-label{white-space:nowrap}.country-list{max-width:calc(100vw - 105px)}.country-btn{font-size:11px;padding:7px 9px}.main{padding:18px 13px}.welcome-row{padding:20px 0 16px;flex-direction:column}.welcome-row h1{font-size:21px}.last-update{font-size:10px}.stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.site-footer{flex-direction:column;gap:5px;padding:14px}.date-chip{display:none}}
