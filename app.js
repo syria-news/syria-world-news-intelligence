@@ -11,7 +11,8 @@ function relativeDate(value) {
   return new Intl.DateTimeFormat('ar', { dateStyle: 'medium', timeStyle: 'short' }).format(date);
 }
 function renderCountries() {
-  $('country-list').innerHTML = state.countries.map(c => `<button class="country-btn ${state.selectedCountry === c.id ? 'selected' : ''}" data-country="${c.id}"><i></i>${escapeHtml(c.name)}</button>`).join('');
+  const allButton = `<button class="country-btn ${state.selectedCountry === 'all' ? 'selected' : ''}" data-country="all"><i></i>الجميع</button>`;
+  $('country-list').innerHTML = allButton + state.countries.map(c => `<button class="country-btn ${state.selectedCountry === c.id ? 'selected' : ''}" data-country="${c.id}"><i></i>${escapeHtml(c.name)}</button>`).join('');
   document.querySelectorAll('[data-country]').forEach(btn => btn.addEventListener('click', () => { state.selectedCountry = btn.dataset.country; renderCountries(); loadNews(); }));
 }
 function getFiltered() {
