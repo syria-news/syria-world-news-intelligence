@@ -149,3 +149,24 @@ body{background:#071426;color:#eaf1f8}
 .flag-glow{background:#16b9a522;filter:blur(32px)}
 .flag-caption{color:#d8e5ee;letter-spacing:.1px}
 @media(max-width:720px){.syrian-flag{width:108px;transform:none}}
+
+/* Official sources directory */
+.source-group{margin:18px 0 26px}
+.source-group-heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-bottom:9px;border-bottom:1px solid #28465f}
+.source-group-heading h3{margin:0;color:#eaf3fa;font-size:16px}
+.source-group-heading span{font-size:11px;color:#91a9bd}
+.source-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.source-card{padding:16px;border:1px solid #2a4862;border-radius:12px;background:linear-gradient(145deg,#142b43,#102238);box-shadow:0 6px 18px #0002}
+.source-card-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.source-kind,.source-status{font-size:10px;color:#a8bdcf;background:#203b54;border-radius:20px;padding:4px 8px}
+.source-status{color:#7bd9ca;background:#173d3c}
+.source-card h4{margin:12px 0 5px;font-size:16px;color:#f2f7fb}
+.source-card p{font-size:12px;line-height:1.8;color:#a9bac9;margin:0}
+.source-platforms{display:flex;gap:7px;flex-wrap:wrap;margin-top:14px}
+.source-platforms a{font-size:11px;text-decoration:none;color:#60d5c7;border:1px solid #315a6b;border-radius:7px;padding:6px 9px}
+.source-platforms a:hover{background:#1b4055}
+.source-pending{font-size:11px;color:#d8b878}
+.source-subsection{display:grid;gap:4px;margin-top:12px;padding:10px;border-right:2px solid #36bdb0;background:#10283b;border-radius:7px}
+.source-subsection strong{font-size:12px;color:#d9f3ef}
+.source-subsection span{font-size:10px;line-height:1.7;color:#9fb4c6}
+@media(max-width:720px){.source-grid{grid-template-columns:1fr}.source-card{padding:14px}.source-card h4{font-size:15px}}
