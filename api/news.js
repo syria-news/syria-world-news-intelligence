@@ -19,7 +19,8 @@ const WATCHLIST = [
 ];
 
 const DIRECT_FEEDS = [
-  { id: 'aawsat-main', source: 'الشرق الأوسط', url: 'https://aawsat.com/feed', country: 'arab', countryName: 'عربي وإقليمي' },
+  { id: 'enab-baladi-direct', source: 'عنب بلدي', url: 'https://www.enabbaladi.net/feed/', country: 'syria', countryName: 'سوريا' },
+  { id: 'aawsat-main', source: 'الشرق الأوسط', url: 'https://aawsat.com/feed/news', country: 'arab', countryName: 'عربي وإقليمي' },
   { id: 'enab-baladi', source: 'عنب بلدي', url: 'https://www.enabbaladi.net/feed/', country: 'syria', countryName: 'سوريا' },
   { id: 'bbc-world', source: 'BBC News', url: 'https://feeds.bbci.co.uk/news/world/rss.xml', country: 'international', countryName: 'دولي' },
   { id: 'aljazeera-en', source: 'الجزيرة الإنجليزية', url: 'https://www.aljazeera.com/xml/rss/all.xml', country: 'arab', countryName: 'عربي وإقليمي' },
@@ -29,6 +30,7 @@ const DIRECT_FEEDS = [
 ];
 
 const PUBLISHER_SEARCHES = [
+  { id: 'ultra-syria-publisher', source: 'ألترا سوريا', query: 'site:ultrasyria.ultrasawt.com', country: 'syria', countryName: 'سوريا' },
   { id: 'alaraby-syria', source: 'العربي الجديد – أخبار سورية', query: 'site:alaraby.co.uk/news/syria', country: 'syria', countryName: 'سوريا' },
   { id: 'global-agencies', source: 'وكالات دولية: رويترز وAP وAFP وCNN', query: '(site:reuters.com OR site:apnews.com OR site:afp.com OR site:cnn.com)', country: 'international', countryName: 'دولي' },
   { id: 'arab-publishers', source: 'منصات عربية: الجزيرة والعربية والشرق والمشهد', query: '(site:aljazeera.net OR site:alarabiya.net OR site:skynewsarabia.com OR site:asharq.com OR site:almashhad.com)', country: 'arab', countryName: 'عربي وإقليمي' },
