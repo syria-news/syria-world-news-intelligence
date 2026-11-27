@@ -1,4 +1,5 @@
 const Parser = require('rss-parser');
+const crypto = require('crypto');
 const parser = new Parser({
   timeout: 12000,
   headers: { 'User-Agent': 'SyriaNewsIntelligence/1.0 (+news monitoring)' }
@@ -53,6 +54,19 @@ function importance(text) {
   return 'عادي';
 }
 
+function stableId(prefix, value) {
+  return `${prefix}-${crypto.createHash('sha1').update(String(value || '')).digest('hex').slice(0, 18)}`;
+}
+
+function publisherFromTitle(title, fallback) {
+  const parts = String(title || '').split(' - ');
+  return parts.length > 1 ? parts.pop().trim() : fallback;
+}
+
+function isSyriaRelated(text) {
+  return /سوريا|السوري|السورية|دمشق|حلب|حمص|حماة|إدلب|درعا|السويداء|دير الزور|الرقة|الحسكة|القامشلي|اللاذقية|طرطوس|ريف دمشق|الجولان|syria|syrian|damascus|aleppo/i.test(text || '');
+}
+
 function cleanHtml(value = '') {
   return String(value).replace(/<[^>]*>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&#39;/g, "'").replace(/&quot;/g, '"').replace(/\s+/g, ' ').trim();
 }
@@ -75,7 +89,7 @@ module.exports = async (req, res) => {
         const description = cleanHtml(item.contentSnippet || item.content || item.summary || '');
         const combined = `${title} ${description}`;
         return {
-          id: `${country.id}-${Buffer.from(item.link || title).toString('base64').replace(/[^a-z0-9]/gi, '').slice(0, 24)}`,
+          id: stableId(country.id, item.link || title),
           title,
           description: description.slice(0, 420),
           url: item.link || '',
@@ -95,7 +109,7 @@ module.exports = async (req, res) => {
     const directResults = await Promise.allSettled(directTargets.map(async feed => {
       const parsed = await parser.parseURL(feed.url);
       return (parsed.items || []).map(item => ({
-        id: `${feed.id}-${Buffer.from(item.link || item.title || '').toString('base64').replace(/[^a-z0-9]/gi, '').slice(0, 24)}`,
+        id: stableId(feed.id, item.link || item.title),
         title: cleanHtml(item.title || ''),
         description: cleanHtml(item.contentSnippet || item.content || item.summary || '').slice(0, 420),
         url: item.link || '',
@@ -106,18 +120,23 @@ module.exports = async (req, res) => {
         countryName: feed.countryName,
         category: classify(`${item.title || ''} ${item.contentSnippet || ''}`),
         importance: importance(`${item.title || ''} ${item.contentSnippet || ''}`)
-      }));
+      };
+      });
     }));
     const publisherResults = await Promise.allSettled(publisherTargets.map(async feed => {
       const url = 'https://news.google.com/rss/search?' + new URLSearchParams({ q: feed.query, hl: 'ar', gl: 'TR', ceid: 'TR:ar' }).toString();
       const parsed = await parser.parseURL(url);
-      return (parsed.items || []).map(item => ({
-        id: `${feed.id}-${Buffer.from(item.link || item.title || '').toString('base64').replace(/[^a-z0-9]/gi, '').slice(0, 24)}`,
-        title: cleanHtml(item.title || ''),
+      const items = (parsed.items || []).filter(item => feed.id !== 'syria-publishers' || isSyriaRelated(`${item.title || ''} ${item.contentSnippet || ''}`));
+      return items.map(item => {
+        const title = cleanHtml(item.title || '');
+        const sourceName = item.source?.name || publisherFromTitle(title, feed.source);
+        return {
+        id: stableId(feed.id, item.link || title),
+        title,
         description: cleanHtml(item.contentSnippet || item.content || item.summary || '').slice(0, 420),
         url: item.link || '',
-        source: item.source?.name || feed.source,
-        sourceLinks: [{ name: item.source?.name || feed.source, url: item.link || '' }],
+        source: sourceName,
+        sourceLinks: [{ name: sourceName, url: item.link || '' }],
         publishedAt: item.isoDate || item.pubDate || null,
         country: feed.country,
         countryName: feed.countryName,
