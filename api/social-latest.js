@@ -4,15 +4,15 @@ function decodeHtml(value = '') {
   return String(value)
     .replace(/&nbsp;/gi, ' ').replace(/&amp;/gi, '&').replace(/&quot;/gi, '"')
     .replace(/&#39;/gi, "'").replace(/&#x27;/gi, "'").replace(/&lt;/gi, '<').replace(/&gt;/gi, '>')
-    .replace(/&#(\\d+);/g, (_, n) => String.fromCharCode(Number(n)))
+    .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(Number(n)))
     .replace(/&#x([0-9a-f]+);/gi, (_, n) => String.fromCharCode(parseInt(n, 16)));
 }
 function plainText(value = '') {
-  return decodeHtml(String(value).replace(/<br\\s*\\/?\\s*>/gi, '\\n').replace(/<\\/p>/gi, '\\n').replace(/<[^>]*>/g, ' '))
-    .replace(/[ \\t]+/g, ' ').replace(/\\n\\s+/g, '\\n').trim().slice(0, 1400);
+  return decodeHtml(String(value).replace(/<br\s*\/?\s*>/gi, '\n').replace(/<\/p>/gi, '\n').replace(/<[^>]*>/g, ' '))
+    .replace(/[ \t]+/g, ' ').replace(/\n\s+/g, '\n').trim().slice(0, 1400);
 }
 async function latestFromChannel(source, platform) {
-  const match = platform.url.match(/t\\.me\\/([A-Za-z0-9_]+)/);
+  const match = platform.url.match(/t\.me\/([A-Za-z0-9_]+)/);
   if (!match) return null;
   const channel = match[1];
   const response = await fetch('https://t.me/s/' + channel, {
@@ -21,15 +21,14 @@ async function latestFromChannel(source, platform) {
   });
   if (!response.ok) throw new Error('Telegram HTTP ' + response.status);
   const html = await response.text();
-  const posts = [...html.matchAll(/data-post="([^"]+)"[\\s\\S]*?class="tgme_widget_message_wrap/g)];
-  const candidates = [...html.matchAll(/<div class="tgme_widget_message_wrap[\\s\\S]*?(?=<div class="tgme_widget_message_wrap|$)/g)];
+  const candidates = [...html.matchAll(/<div class="tgme_widget_message_wrap[^"]*"[\s\S]*?(?=<div class="tgme_widget_message_wrap|$)/g)];
   if (!candidates.length) return null;
   const block = candidates[candidates.length - 1][0];
   const postId = (block.match(/data-post="([^"]+)"/) || [])[1];
   const date = (block.match(/<time[^>]*datetime="([^"]+)"/) || [])[1];
-  const messageMatch = block.match(/<div class="tgme_widget_message_text[^"]*"[^>]*>([\\s\\S]*?)<\\/div>/);
+  const messageMatch = block.match(/<div class="tgme_widget_message_text[^"]*"[^>]*>([\s\S]*?)<\/div>/);
   const description = plainText(messageMatch ? messageMatch[1] : '');
-  const title = description ? description.split('\\n')[0].slice(0, 180) : 'منشور من قناة ' + source.name;
+  const title = description ? description.split('\n')[0].slice(0, 180) : 'منشور من قناة ' + source.name;
   if (!postId && !date && !description) return null;
   return {
     sourceId: source.id, sourceName: source.name, platform: 'Telegram',
