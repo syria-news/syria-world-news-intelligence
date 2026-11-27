@@ -5,7 +5,7 @@ const parser = new Parser({ timeout: 12000, headers: { 'User-Agent': 'SyriaNewsI
 const SEARCHES = [
   { id: 'syria-editorial', query: '(سوريا OR دمشق OR حلب OR إدلب OR الحسكة) (مقال OR تحليل OR رأي OR قراءة OR وجهة نظر OR commentary OR analysis)', country: 'syria', countryName: 'سوريا' },
   { id: 'regional-editorial', query: '(الشرق الأوسط OR لبنان OR فلسطين OR العراق OR تركيا OR إيران) (مقال OR تحليل OR رأي OR قراءة OR وجهة نظر OR analysis OR opinion)', country: 'arab', countryName: 'عربي وإقليمي' },
-  { id: 'publisher-editorial', query: '(سوريا OR الشرق الأوسط) (تحليل OR رأي OR مقال OR analysis OR opinion) (site:alaraby.co.uk OR site:ultrasyria.ultrasawt.com OR site:syria.tv OR site:afp.com OR site:theguardian.com OR site:aljazeera.net)', country: 'syria', countryName: 'سوريا' }
+  { id: 'publisher-editorial', query: '(سوريا OR الشرق الأوسط) (تحليل OR رأي OR مقال OR analysis OR opinion) (site:alaraby.co.uk OR site:ultrasyria.ultrasawt.com OR site:enabbaladi.net OR site:syria.tv OR site:afp.com OR site:theguardian.com OR site:aljazeera.net)', country: 'syria', countryName: 'سوريا' }
 ];
 const GUARDIAN_OPINION = 'https://www.theguardian.com/commentisfree/rss';
 const MAX_AGE_DAYS = 30;
