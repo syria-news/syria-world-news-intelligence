@@ -44,7 +44,7 @@ function render() {
 
 function renderSources() {
   const groups = [...new Set(state.sources.map(source => source.group))];
-  $('results-title').textContent = 'المصادر الرسمية';
+  $('results-title').textContent = 'دليل المصادر';
   $('results-subtitle').textContent = 'دليل الجهات والحسابات التي يجري تجهيزها للرصد';
   $('results-count').textContent = `${state.sources.length} جهات`;
   $('status').textContent = 'هذا الدليل ينظم الجهات وحساباتها. ظهور المصدر هنا لا يعني أن جلب منشوراته آلياً أصبح مفعلاً بعد.';
@@ -103,7 +103,7 @@ async function loadNews() {
 
 document.querySelectorAll('[data-view]').forEach(btn => btn.addEventListener('click', () => {
   state.view = btn.dataset.view; document.querySelectorAll('[data-view]').forEach(x=>x.classList.toggle('active',x===btn));
-  $('page-title').textContent = state.view==='urgent'?'عاجل ومهم':state.view==='saved'?'المحفوظات':state.view==='sources'?'المصادر الرسمية':'موجز الأخبار';
+  $('page-title').textContent = state.view==='urgent'?'عاجل ومهم':state.view==='saved'?'المحفوظات':state.view==='sources'?'دليل المصادر':'موجز الأخبار';
   if (state.view === 'sources') renderSources(); else render();
 }));
 ['search','category-filter','importance-filter','sort-filter'].forEach(id => $(id).addEventListener(id==='search'?'input':'change',render));
