@@ -12,7 +12,23 @@ const WATCHLIST = [
   { id: 'un', name: 'الأمم المتحدة', query: 'الأمم المتحدة OR مجلس الأمن OR الأمم المتحدة سوريا' },
   { id: 'iran', name: 'إيران', query: 'إيران OR طهران AND (سوريا OR إسرائيل OR المنطقة)' },
   { id: 'israel', name: 'إسرائيل', query: 'إسرائيل OR تل أبيب AND (سوريا OR لبنان OR إيران)' },
-  { id: 'lebanon', name: 'لبنان', query: 'لبنان OR بيروت AND (سياسة OR أمن OR إسرائيل)' }
+  { id: 'lebanon', name: 'لبنان', query: 'لبنان OR بيروت AND (سياسة OR أمن OR إسرائيل)' },
+  { id: 'arab', name: 'عربي وإقليمي', query: '(الشرق الأوسط OR الخليج OR الأردن OR العراق OR فلسطين OR مصر OR اليمن OR السودان OR ليبيا) AND (سياسة OR أمن OR دبلوماسية OR اقتصاد)' },
+  { id: 'international', name: 'دولي', query: '(أوكرانيا OR الصين OR أوروبا OR الولايات المتحدة OR الأمم المتحدة OR العالم) AND (سياسة OR حرب OR اقتصاد OR دبلوماسية)' }
+];
+
+const DIRECT_FEEDS = [
+  { id: 'bbc-world', source: 'BBC News', url: 'https://feeds.bbci.co.uk/news/world/rss.xml', country: 'international', countryName: 'دولي' },
+  { id: 'aljazeera-en', source: 'الجزيرة الإنجليزية', url: 'https://www.aljazeera.com/xml/rss/all.xml', country: 'arab', countryName: 'عربي وإقليمي' },
+  { id: 'dw-world', source: 'دويتشه فيله (DW)', url: 'https://rss.dw.com/rdf/rss-en-world', country: 'international', countryName: 'دولي' },
+  { id: 'france24-world', source: 'فرانس 24', url: 'https://www.france24.com/en/rss', country: 'international', countryName: 'دولي' },
+  { id: 'guardian-world', source: 'الغارديان', url: 'https://www.theguardian.com/world/rss', country: 'international', countryName: 'دولي' }
+];
+
+const PUBLISHER_SEARCHES = [
+  { id: 'global-agencies', source: 'وكالات دولية: رويترز وAP وAFP وCNN', query: '(site:reuters.com OR site:apnews.com OR site:afp.com OR site:cnn.com)', country: 'international', countryName: 'دولي' },
+  { id: 'arab-publishers', source: 'منصات عربية: الجزيرة والعربية والشرق والمشهد', query: '(site:aljazeera.net OR site:alarabiya.net OR site:skynewsarabia.com OR site:asharq.com OR site:almashhad.com)', country: 'arab', countryName: 'عربي وإقليمي' },
+  { id: 'syria-publishers', source: 'مصادر دولية حول سوريا', query: '(سوريا OR دمشق OR حلب) (site:reuters.com OR site:apnews.com OR site:afp.com OR site:bbc.com OR site:aljazeera.net OR site:alarabiya.net)', country: 'syria', countryName: 'سوريا' }
 ];
 
 function classify(text) {
@@ -74,7 +90,44 @@ module.exports = async (req, res) => {
       });
     }));
 
-    const articles = results.flatMap(r => r.status === 'fulfilled' ? r.value : []);
+    const directResults = await Promise.allSettled(DIRECT_FEEDS.map(async feed => {
+      const parsed = await parser.parseURL(feed.url);
+      return (parsed.items || []).map(item => ({
+        id: `${feed.id}-${Buffer.from(item.link || item.title || '').toString('base64').replace(/[^a-z0-9]/gi, '').slice(0, 24)}`,
+        title: cleanHtml(item.title || ''),
+        description: cleanHtml(item.contentSnippet || item.content || item.summary || '').slice(0, 420),
+        url: item.link || '',
+        source: feed.source,
+        sourceLinks: [{ name: feed.source, url: item.link || '' }],
+        publishedAt: item.isoDate || item.pubDate || null,
+        country: feed.country,
+        countryName: feed.countryName,
+        category: classify(`${item.title || ''} ${item.contentSnippet || ''}`),
+        importance: importance(`${item.title || ''} ${item.contentSnippet || ''}`)
+      }));
+    }));
+    const publisherResults = await Promise.allSettled(PUBLISHER_SEARCHES.map(async feed => {
+      const url = 'https://news.google.com/rss/search?' + new URLSearchParams({ q: feed.query, hl: 'ar', gl: 'TR', ceid: 'TR:ar' }).toString();
+      const parsed = await parser.parseURL(url);
+      return (parsed.items || []).map(item => ({
+        id: `${feed.id}-${Buffer.from(item.link || item.title || '').toString('base64').replace(/[^a-z0-9]/gi, '').slice(0, 24)}`,
+        title: cleanHtml(item.title || ''),
+        description: cleanHtml(item.contentSnippet || item.content || item.summary || '').slice(0, 420),
+        url: item.link || '',
+        source: item.source?.name || feed.source,
+        sourceLinks: [{ name: item.source?.name || feed.source, url: item.link || '' }],
+        publishedAt: item.isoDate || item.pubDate || null,
+        country: feed.country,
+        countryName: feed.countryName,
+        category: classify(`${item.title || ''} ${item.contentSnippet || ''}`),
+        importance: importance(`${item.title || ''} ${item.contentSnippet || ''}`)
+      }));
+    }));
+    const extraResults = [...directResults, ...publisherResults];
+    const articles = [
+      ...results.flatMap(r => r.status === 'fulfilled' ? r.value : []),
+      ...extraResults.flatMap(r => r.status === 'fulfilled' ? r.value : [])
+    ];
     // Merge exact-title duplicates instead of silently dropping secondary source links.
     const merged = new Map();
     for (const article of articles) {
@@ -99,14 +152,19 @@ module.exports = async (req, res) => {
       }
     }
     const unique = [...merged.values()]
-      .sort((a, b) => new Date(b.publishedAt || 0) - new Date(a.publishedAt || 0));
+      .sort((a, b) => {
+        const rank = value => value === 'syria' ? 3 : value === 'arab' ? 2 : value === 'international' ? 1 : 0;
+        return rank(b.country) - rank(a.country) ||
+          ({ 'عاجل': 0, 'مهم': 1, 'عادي': 2 }[a.importance] - { 'عاجل': 0, 'مهم': 1, 'عادي': 2 }[b.importance]) ||
+          new Date(b.publishedAt || 0) - new Date(a.publishedAt || 0);
+      });
 
     return res.status(200).json({
       articles: unique,
       updatedAt: new Date().toISOString(),
       countries: WATCHLIST.map(({ id, name }) => ({ id, name })),
       total: unique.length,
-      failedFeeds: results.filter(r => r.status === 'rejected').length,
+      failedFeeds: [...results, ...extraResults].filter(r => r.status === 'rejected').length,
       note: 'التصنيف والأهمية آليان أوليان، ولا يمثلان تحققاً تحريرياً مستقلاً.'
     });
   } catch (error) {
