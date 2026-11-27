@@ -25,7 +25,7 @@
         <div class="brand-copy"><strong>العين <em>الراصدة</em></strong><span>حيث تتقاطع الأخبار وتتكشف الصورة</span></div>
       </div>
       <div class="masthead-actions">
-        <span class="date-chip" id="today-label">اليوم</span>
+        <span class="date-chip" id="today-label">التاريخ</span><span class="clock-chip" id="clock-label">--:--:-- · توقيت دمشق</span>
         <button id="refresh" class="refresh-btn"><span>↻</span> تحديث الرصد</button>
       </div>
     </header>
@@ -63,25 +63,17 @@
       </div>
       <div class="banner-flag-wrap">
         <div class="flag-glow"></div>
-        <svg class="syrian-flag" viewBox="0 0 300 200" role="img" aria-label="علم سوريا الجديد: ثلاثة أشرطة خضراء وبيضاء وسوداء وثلاث نجمات حمراء">
+        <svg class="syrian-map-flag" viewBox="0 0 200 220" role="img" aria-label="خريطة سوريا بألوان العلم السوري">
           <defs>
-            <clipPath id="flagClip"><rect x="2" y="2" width="296" height="196" rx="5"/></clipPath>
-            <linearGradient id="flagLight" x1="0" y1="0" x2="1" y2=".15"><stop offset="0" stop-color="#000" stop-opacity=".12"/><stop offset=".22" stop-color="#fff" stop-opacity=".13"/><stop offset=".52" stop-color="#000" stop-opacity=".04"/><stop offset=".78" stop-color="#fff" stop-opacity=".1"/><stop offset="1" stop-color="#000" stop-opacity=".1"/></linearGradient>
-            <linearGradient id="flagFold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".12"/><stop offset=".5" stop-color="#000" stop-opacity=".04"/><stop offset="1" stop-color="#000" stop-opacity=".13"/></linearGradient>
+            <clipPath id="syriaMapClip"><path d="M37 18 L126 17 L145 28 L164 43 L158 62 L174 78 L160 96 L171 113 L155 130 L164 148 L145 164 L123 174 L101 190 L82 174 L63 166 L48 150 L35 133 L24 109 L31 88 L19 69 L34 51 L29 34 Z"/></clipPath>
+            <linearGradient id="syriaMapShade" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".12"/><stop offset=".55" stop-color="#000" stop-opacity=".02"/><stop offset="1" stop-color="#000" stop-opacity=".2"/></linearGradient>
           </defs>
-          <g clip-path="url(#flagClip)">
-            <rect x="2" y="2" width="296" height="65.33" fill="#007A3D"/>
-            <rect x="2" y="67.33" width="296" height="65.34" fill="#fff"/>
-            <rect x="2" y="132.67" width="296" height="65.33" fill="#000"/>
-            <g fill="#CE1126">
-              <path d="M52 82l5.1 15.7h16.5L60.2 107.4l5.1 15.7L52 113.4l-13.3 9.7 5.1-15.7-13.4-9.7h16.5z"/>
-              <path d="M150 82l5.1 15.7h16.5l-13.4 9.7 5.1 15.7-13.3-9.7-13.3 9.7 5.1-15.7-13.4-9.7h16.5z"/>
-              <path d="M248 82l5.1 15.7h16.5l-13.4 9.7 5.1 15.7-13.3-9.7-13.3 9.7 5.1-15.7-13.4-9.7h16.5z"/>
-            </g>
-            <path d="M2 2h296v196H2z" fill="url(#flagLight)"/>
-            <path d="M2 2h296v196H2z" fill="url(#flagFold)" opacity=".42"/>
+          <g clip-path="url(#syriaMapClip)">
+            <rect x="0" y="0" width="200" height="73.5" fill="#007A3D"/><rect x="0" y="73.5" width="200" height="73.5" fill="#fff"/><rect x="0" y="147" width="200" height="73" fill="#000"/>
+            <g fill="#CE1126"><path d="M61 91l4 12h13l-10.5 7.6 4 12L61 115l-10.5 7.6 4-12L44 103h13z"/><path d="M100 91l4 12h13l-10.5 7.6 4 12L100 115l-10.5 7.6 4-12L83 103h13z"/><path d="M139 91l4 12h13l-10.5 7.6 4 12L139 115l-10.5 7.6 4-12L122 103h13z"/></g>
+            <rect width="200" height="220" fill="url(#syriaMapShade)"/>
           </g>
-          <rect x="2" y="2" width="296" height="196" rx="5" fill="none" stroke="#ffffff" stroke-opacity=".38" stroke-width="2"/>
+          <path d="M37 18 L126 17 L145 28 L164 43 L158 62 L174 78 L160 96 L171 113 L155 130 L164 148 L145 164 L123 174 L101 190 L82 174 L63 166 L48 150 L35 133 L24 109 L31 88 L19 69 L34 51 L29 34 Z" fill="none" stroke="#c5e2ed" stroke-width="2.5" stroke-linejoin="round"/>
         </svg>
         <span class="flag-caption">سوريا في قلب المشهد</span>
       </div>
