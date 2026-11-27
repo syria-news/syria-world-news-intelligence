@@ -20,10 +20,6 @@
       "status": "موثق",
       "platforms": [
         {
-          "name": "Telegram",
-          "url": "https://t.me/SyrianPresidency"
-        },
-        {
           "name": "X",
           "url": "https://x.com/Presidency_Sy"
         }
@@ -604,6 +600,66 @@
         {
           "name": "الموقع",
           "url": "https://www.alaraby.co.uk/"
+        }
+      ]
+    },
+    {
+      "id": "almodon",
+      "name": "جريدة المدن",
+      "group": "المصادر العربية والإقليمية",
+      "kind": "صحيفة إلكترونية عربية",
+      "description": "جريدة المدن الإلكترونية؛ تغطي الشأن اللبناني والسوري والعربي، مع خلاصة RSS ومتابعة قناة المدن سوريا على Telegram.",
+      "status": "الموقع وRSS موثقان؛ قناة Telegram متاحة",
+      "platforms": [
+        {
+          "name": "الموقع",
+          "url": "https://www.almodon.com/"
+        },
+        {
+          "name": "RSS",
+          "url": "https://www.almodon.com/rss"
+        },
+        {
+          "name": "Telegram",
+          "url": "https://t.me/almodon1"
+        }
+      ]
+    },
+    {
+      "id": "syria-now-media",
+      "name": "سوريا الآن",
+      "group": "الإعلام السوري",
+      "kind": "منصة إعلامية سورية",
+      "description": "منصة سوريا الآن؛ متابعة الأخبار والتغطيات والبرامج والمواد المرئية عبر حساباتها الاجتماعية الرسمية.",
+      "status": "روابط الحسابات مجمعة من صفحة المنصة الرسمية",
+      "platforms": [
+        {
+          "name": "الصفحة الجامعة",
+          "url": "https://linktr.ee/AJSyriaNow"
+        },
+        {
+          "name": "Telegram",
+          "url": "https://t.me/AJSyriaNow"
+        },
+        {
+          "name": "X",
+          "url": "https://x.com/AJSyriaNowN"
+        },
+        {
+          "name": "Instagram",
+          "url": "https://www.instagram.com/syrianown/"
+        },
+        {
+          "name": "Facebook",
+          "url": "https://www.facebook.com/share/19icuHaZLu/"
+        },
+        {
+          "name": "YouTube",
+          "url": "https://www.youtube.com/@ajsyrianow"
+        },
+        {
+          "name": "TikTok",
+          "url": "https://www.tiktok.com/@ajsyrianow"
         }
       ]
     }
