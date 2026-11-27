@@ -507,8 +507,8 @@
       "name": "تلفزيون سوريا",
       "group": "الإعلام السوري",
       "kind": "مؤسسة إعلامية سورية",
-      "description": "الموقع الرسمي وتحديثات الأخبار العاجلة والتقارير المنشورة على المنصات الاجتماعية.",
-      "status": "موثق عبر الموقع الرسمي",
+      "description": "الموقع الرسمي وقنوات تلفزيون سوريا على Telegram وX وFacebook وInstagram وYouTube وTikTok وWhatsApp.",
+      "status": "موثق عبر صفحات المؤسسة وروابطها المنشورة",
       "platforms": [
         {
           "name": "الموقع",
@@ -516,7 +516,7 @@
         },
         {
           "name": "Telegram",
-          "url": "https://t.me/televisionsyria"
+          "url": "https://t.me/TelevisionSyria"
         },
         {
           "name": "X",
@@ -524,7 +524,23 @@
         },
         {
           "name": "Facebook",
-          "url": "https://www.facebook.com/syrtelevision"
+          "url": "https://www.facebook.com/syrtelevision/"
+        },
+        {
+          "name": "Instagram",
+          "url": "https://www.instagram.com/syr_television/"
+        },
+        {
+          "name": "YouTube",
+          "url": "https://www.youtube.com/channel/UCJsZ22yL1IW0R2u0jnnyYog"
+        },
+        {
+          "name": "TikTok",
+          "url": "https://www.tiktok.com/@syriatelevision"
+        },
+        {
+          "name": "WhatsApp",
+          "url": "https://whatsapp.com/channel/0029Va6ZVgLEgGfU659Nkq1R"
         }
       ]
     }
