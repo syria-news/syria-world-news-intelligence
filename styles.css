@@ -170,3 +170,8 @@ body{background:#071426;color:#eaf1f8}
 .source-subsection strong{font-size:12px;color:#d9f3ef}
 .source-subsection span{font-size:10px;line-height:1.7;color:#9fb4c6}
 @media(max-width:720px){.source-grid{grid-template-columns:1fr}.source-card{padding:14px}.source-card h4{font-size:15px}}
+
+/* Editorial articles section */
+.editorial-card{border-right:3px solid #35bcae}
+.editorial-card .news-foot{flex-wrap:wrap;gap:8px 18px}
+@media(max-width:720px){.editorial-card .news-foot{display:flex;flex-direction:column;align-items:flex-start}}
