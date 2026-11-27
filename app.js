@@ -10,12 +10,28 @@ function relativeDate(value) {
   const date = new Date(value); if (Number.isNaN(date.getTime())) return 'تاريخ غير متاح';
   return new Intl.DateTimeFormat('ar', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Damascus' }).format(date);
 }
+function relativeAge(value) {
+  if (!value) return '';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '';
+  const minutes = Math.max(0, Math.floor((Date.now() - date.getTime()) / 60000));
+  if (minutes < 1) return 'نُشر الآن';
+  if (minutes < 60) return 'منذ ' + minutes + ' ' + (minutes === 1 ? 'دقيقة' : minutes === 2 ? 'دقيقتين' : 'دقائق');
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return 'منذ ' + (hours === 1 ? 'ساعة' : hours === 2 ? 'ساعتين' : hours + ' ساعات');
+  const days = Math.floor(hours / 24);
+  if (days < 30) return 'منذ ' + (days === 1 ? 'يوم' : days === 2 ? 'يومين' : days + ' أيام');
+  const months = Math.floor(days / 30);
+  if (months < 12) return 'منذ ' + (months === 1 ? 'شهر' : months === 2 ? 'شهرين' : months + ' أشهر');
+  const years = Math.floor(months / 12);
+  return 'منذ ' + (years === 1 ? 'سنة' : years === 2 ? 'سنتين' : years + ' سنوات');
+}
 function publicationMeta(value) {
   if (!value) return '<span class="publication-date unavailable">تاريخ النشر غير متاح</span>';
   const date = new Date(value); if (Number.isNaN(date.getTime())) return '<span class="publication-date unavailable">تاريخ النشر غير متاح</span>';
   const dateText = new Intl.DateTimeFormat('ar', { day:'numeric', month:'long', year:'numeric', timeZone:'Asia/Damascus' }).format(date);
   const timeText = new Intl.DateTimeFormat('ar', { hour:'2-digit', minute:'2-digit', hourCycle:'h23', timeZone:'Asia/Damascus' }).format(date);
-  return '<span class="publication-date"><b>تاريخ النشر</b><strong>'+dateText+'</strong></span><span class="publication-time"><b>الوقت</b><strong>'+timeText+'</strong><small>توقيت دمشق</small></span>';
+  return '<span class="relative-age">'+relativeAge(value)+'</span><span class="publication-date"><b>تاريخ النشر</b><strong>'+dateText+'</strong></span><span class="publication-time"><b>الوقت</b><strong>'+timeText+'</strong><small>توقيت دمشق</small></span>';
 }
 function updateClock() {
   const now = new Date();
@@ -91,7 +107,7 @@ async function loadArticles() {
 }
 
 function sourceMatchesArticle(source, article) {
-  const aliases = {'aawsat':['الشرق الأوسط','aawsat.com'],'afp':['فرانس برس','وكالة فرانس برس','AFP','afp.com'],'guardian':['الغارديان','The Guardian','theguardian.com'],'enab-baladi':['عنب بلدي','enabbaladi.net'],'alaraby-newspaper':['العربي الجديد','alaraby.co.uk'],'ultra-syria':['ألترا سوريا','ultrasyria.ultrasawt.com'],'syria-tv':['تلفزيون سوريا','syria.tv']};
+  const aliases = {'aawsat':['الشرق الأوسط','aawsat.com'],'afp':['فرانس برس','وكالة فرانس برس','AFP','afp.com'],'guardian':['الغارديان','The Guardian','theguardian.com'],'enab-baladi':['عنب بلدي','enabbaladi.net'],'alaraby-newspaper':['العربي الجديد','alaraby.co.uk'],'ultra-syria':['ألترا سوريا','ultrasyria.ultrasawt.com'],'syria-tv':['تلفزيون سوريا','syria.tv'],'almodon':['المدن','almodon.com']};
   const terms = aliases[source.id] || [source.name];
   const haystack = (article.source || '')+' '+(article.url || '')+' '+(article.title || '');
   return terms.some(term => haystack.toLowerCase().includes(term.toLowerCase()));
