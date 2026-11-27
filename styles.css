@@ -175,3 +175,30 @@ body{background:#071426;color:#eaf1f8}
 .editorial-card{border-right:3px solid #35bcae}
 .editorial-card .news-foot{flex-wrap:wrap;gap:8px 18px}
 @media(max-width:720px){.editorial-card .news-foot{display:flex;flex-direction:column;align-items:flex-start}}
+
+/* Clear newsroom clock and publication timestamps */
+.clock-chip{display:inline-flex;align-items:center;padding:9px 12px;border:1px solid #2b526b;border-radius:8px;background:#102a42;color:#79dfd2;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.news-foot-enhanced{align-items:center;gap:12px 18px;margin-top:14px}
+.publication-meta{display:flex;align-items:stretch;gap:8px;flex-wrap:wrap}
+.publication-date,.publication-time{display:flex;align-items:center;gap:7px;padding:7px 10px;border:1px solid #34536b;border-radius:8px;background:#102b43;color:#d9e8f2;font-size:11px}
+.publication-date b,.publication-time b{color:#8faec2;font-size:10px;font-weight:500}
+.publication-date strong,.publication-time strong{color:#f4f8fc;font-size:12px;font-weight:700}
+.publication-time{background:#123b43;border-color:#2c716e}
+.publication-time strong{color:#83e1d5;font-variant-numeric:tabular-nums}
+.publication-time small{font-size:9px;color:#9ab9c5}
+.source-name{font-size:11px;color:#9eb2c4}
+.source-latest{margin-top:14px;padding:13px;border:1px solid #2d586c;border-radius:9px;background:linear-gradient(145deg,#102d43,#102538)}
+.source-latest-label{display:block;color:#66d3c5;font-size:10px;font-weight:700;margin-bottom:7px}
+.source-latest>strong{display:block;color:#f2f7fb;font-size:13px;line-height:1.8;margin-bottom:5px}
+.source-latest>p{font-size:11px;line-height:1.8;color:#aebfce;margin:0}
+.source-latest-meta{margin-top:9px}
+.source-latest-meta .publication-date,.source-latest-meta .publication-time{padding:5px 7px;font-size:10px}
+.source-read-link{display:inline-block;margin-top:10px;color:#6de0d1;font-size:11px;font-weight:700;text-decoration:none}
+.source-read-link:hover{text-decoration:underline}
+.source-latest-empty{background:#102337;border-style:dashed;border-color:#35516a}
+.source-latest-empty p{color:#91a7ba}
+.banner-flag-wrap{justify-content:center;min-height:190px}
+.syrian-map-flag{width:min(100%,210px);height:auto;overflow:visible;filter:drop-shadow(0 13px 18px #0008) drop-shadow(0 0 12px #37c6bb30)}
+.flag-glow{width:170px;height:150px;top:20px;background:#16b9a522;filter:blur(35px)}
+@media(max-width:1000px){.masthead-actions{flex-wrap:wrap}}
+@media(max-width:720px){.masthead-actions{justify-content:flex-end}.clock-chip{font-size:10px;padding:7px 8px}.masthead-actions .date-chip{display:none}.news-foot-enhanced{align-items:flex-start}.publication-date,.publication-time{padding:6px 8px}.publication-date strong,.publication-time strong{font-size:11px}.source-latest{padding:11px}.syrian-map-flag{width:108px}.banner-flag-wrap{min-height:110px}}
