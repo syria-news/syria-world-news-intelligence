@@ -203,6 +203,11 @@ module.exports = async (req, res) => {
         ...directResults.map((r, i) => r.status === 'rejected' ? directTargets[i].source : null),
         ...publisherResults.map((r, i) => r.status === 'rejected' ? publisherTargets[i].source : null)
       ].filter(Boolean),
+      failedFeedDetails: [
+        ...results.map((r, i) => r.status === 'rejected' ? { name: targets[i].name, error: r.reason?.message || 'unknown' } : null),
+        ...directResults.map((r, i) => r.status === 'rejected' ? { name: directTargets[i].source, error: r.reason?.message || 'unknown' } : null),
+        ...publisherResults.map((r, i) => r.status === 'rejected' ? { name: publisherTargets[i].source, error: r.reason?.message || 'unknown' } : null)
+      ].filter(Boolean),
       note: 'التصنيف والأهمية آليان أوليان، ولا يمثلان تحققاً تحريرياً مستقلاً.'
     });
   } catch (error) {
