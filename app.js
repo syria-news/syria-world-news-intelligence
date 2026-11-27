@@ -24,7 +24,7 @@ function getFiltered() {
   if (q) list = list.filter(a => `${a.title} ${a.description} ${a.source} ${a.countryName}`.toLowerCase().includes(q));
   if ($('category-filter').value !== 'all') list = list.filter(a => a.category === $('category-filter').value);
   if ($('importance-filter').value !== 'all') list = list.filter(a => a.importance === $('importance-filter').value);
-  if ($('sort-filter').value === 'priority') list.sort((a,b) => ({'عاجل':0,'مهم':1,'عادي':2}[a.importance] - {'عاجل':0,'مهم':1,'عادي':2}[b.importance]) || new Date(b.publishedAt || 0)-new Date(a.publishedAt || 0));
+  if ($('sort-filter').value === 'priority') list.sort((a,b) => ({syria:0,arab:1,international:2}[a.country] ?? 3) - ({syria:0,arab:1,international:2}[b.country] ?? 3) || ({'عاجل':0,'مهم':1,'عادي':2}[a.importance] - {'عاجل':0,'مهم':1,'عادي':2}[b.importance]) || new Date(b.publishedAt || 0)-new Date(a.publishedAt || 0));
   return list;
 }
 function render() {
@@ -38,12 +38,12 @@ function render() {
   $('results-title').textContent = state.view === 'urgent' ? 'العاجل والأخبار المهمة' : state.view === 'saved' ? 'المواد المحفوظة' : 'آخر التطورات';
   $('results-subtitle').textContent = state.selectedCountry === 'all' ? 'الأخبار الواردة من نطاق الرصد' : `الأخبار المتعلقة بـ ${state.countries.find(c=>c.id===state.selectedCountry)?.name || ''}`;
   if (!list.length) { $('news-list').innerHTML = '<div class="empty-state">لا توجد مواد مطابقة للفلاتر الحالية.</div>'; return; }
-  $('news-list').innerHTML = list.map(a => `<article class="news-card"><div class="news-main"><div class="meta-row"><span class="pill">${escapeHtml(a.countryName)}</span><span class="pill category">${escapeHtml(a.category)}</span><span class="pill ${a.importance==='عاجل'?'urgent':a.importance==='مهم'?'important':''}">${escapeHtml(a.importance)}</span></div><h4>${escapeHtml(a.title)}</h4>${a.description ? `<p>${escapeHtml(a.description)}</p>` : ''}<div class="news-foot"><span>◷ ${escapeHtml(relativeDate(a.publishedAt))}</span><span>المصدر: ${escapeHtml(a.source || 'غير محدد')}</span></div></div><div class="news-actions"><button class="save-btn ${state.saved.has(a.id)?'saved':''}" data-save="${escapeHtml(a.id)}" title="حفظ الخبر">${state.saved.has(a.id)?'★':'☆'}</button>${a.url?`<a class="source-link" href="${escapeHtml(a.url)}" target="_blank" rel="noopener noreferrer">المصدر الأصلي ↗</a>`:''}</div></article>`).join('');
+  $('news-list').innerHTML = list.map(a => `<article class="news-card"><div class="news-main"><div class="meta-row"><span class="pill">${escapeHtml(a.countryName)}</span><span class="pill relevance">${a.country==='syria'?'أولوية سورية':a.country==='arab'?'عربي/إقليمي':'دولي'}</span><span class="pill category">${escapeHtml(a.category)}</span><span class="pill ${a.importance==='عاجل'?'urgent':a.importance==='مهم'?'important':''}">${escapeHtml(a.importance)}</span></div><h4>${escapeHtml(a.title)}</h4>${a.description ? `<p>${escapeHtml(a.description)}</p>` : ''}<div class="news-foot"><span>◷ ${escapeHtml(relativeDate(a.publishedAt))}</span><span>المصدر: ${escapeHtml(a.source || 'غير محدد')}</span></div></div><div class="news-actions"><button class="save-btn ${state.saved.has(a.id)?'saved':''}" data-save="${escapeHtml(a.id)}" title="حفظ الخبر">${state.saved.has(a.id)?'★':'☆'}</button>${a.url?`<a class="source-link" href="${escapeHtml(a.url)}" target="_blank" rel="noopener noreferrer">المصدر الأصلي ↗</a>`:''}</div></article>`).join('');
   document.querySelectorAll('[data-save]').forEach(btn => btn.addEventListener('click', () => { const id=btn.dataset.save; state.saved.has(id)?state.saved.delete(id):state.saved.add(id); localStorage.setItem('syria-saved',JSON.stringify([...state.saved])); render(); }));
 }
 
 function renderSources() {
-  const groups = ['مؤسسات الدولة','الوزارات والهيئات','الإعلام الرسمي'];
+  const groups = [...new Set(state.sources.map(source => source.group))];
   $('results-title').textContent = 'المصادر الرسمية';
   $('results-subtitle').textContent = 'دليل الجهات والحسابات التي يجري تجهيزها للرصد';
   $('results-count').textContent = `${state.sources.length} جهات`;
