@@ -1,5 +1,5 @@
 const $ = (id) => document.getElementById(id);
-const state = { articles: [], countries: [], selectedCountry: 'all', view: 'all', saved: new Set(JSON.parse(localStorage.getItem('syria-saved') || '[]')), updatedAt: null, sources: [], editorialItems: [] };
+const state = { articles: [], countries: [], selectedCountry: 'all', view: 'all', saved: new Set(JSON.parse(localStorage.getItem('syria-saved') || '[]')), updatedAt: null, sources: [], sourceArticles: [], sourcePosts: [], sourceFilter: 'all', editorialItems: [] };
 const REFRESH_INTERVAL = 5 * 60 * 1000;
 let lastSuccessfulLoad = 0;
 let isLoading = false;
@@ -96,32 +96,80 @@ function sourceMatchesArticle(source, article) {
   const haystack = (article.source || '')+' '+(article.url || '')+' '+(article.title || '');
   return terms.some(term => haystack.toLowerCase().includes(term.toLowerCase()));
 }
-function latestForSource(source) { return state.articles.filter(article => sourceMatchesArticle(source, article)).sort((a,b)=>new Date(b.publishedAt || 0)-new Date(a.publishedAt || 0))[0] || null; }
+function sourceHasPlatform(source, type) {
+  return (source.platforms || []).some(platform => type === 'website'
+    ? !['Telegram','X'].includes(platform.name)
+    : platform.name === type);
+}
+function latestForSource(source) {
+  const posts = state.sourcePosts.filter(post => post.sourceId === source.id);
+  const article = state.sourceArticles.filter(item => sourceMatchesArticle(source, item))
+    .sort((a,b)=>new Date(b.publishedAt || 0)-new Date(a.publishedAt || 0))[0] || null;
+  const post = posts.sort((a,b)=>new Date(b.publishedAt || 0)-new Date(a.publishedAt || 0))[0] || null;
+  if (!post) return article ? {...article, materialType:'مادة من موجز الأخبار'} : null;
+  if (!article || new Date(post.publishedAt || 0) >= new Date(article.publishedAt || 0)) return {...post, materialType:'آخر منشور على Telegram'};
+  return {...article, materialType:'أحدث مادة من الموقع/موجز الأخبار'};
+}
 function renderSources() {
-  const groups = [...new Set(state.sources.map(source => source.group))];
-  $('results-title').textContent = 'دليل المصادر'; $('results-subtitle').textContent = 'المصادر وآخر المواد التي وصلت منها إلى الرصد'; $('results-count').textContent = state.sources.length+' جهات';
-  $('status').textContent = 'تظهر أحدث مادة عندما تصل من المصدر إلى موجز الرصد. عدم ظهور مادة لا يعني أن الموقع لا ينشر؛ قد يكون الربط الآلي غير مفعّل أو لم تصل مادة مطابقة بعد.'; $('status').className = 'status-message';
-  $('stat-total').textContent = state.sources.length; $('stat-urgent').textContent = '—'; $('stat-important').textContent = '—';
-  $('news-list').innerHTML = groups.map(group => {
-    const items = state.sources.filter(source => source.group === group); if (!items.length) return '';
+  const filtered = state.sources.filter(source => state.sourceFilter === 'all' ||
+    sourceHasPlatform(source, state.sourceFilter));
+  const groups = [...new Set(filtered.map(source => source.group))];
+  $('results-title').textContent = 'دليل المصادر';
+  $('results-subtitle').textContent = 'آخر مادة متاحة من المصادر، دون استبعاد المواد لمجرد قِدم تاريخها';
+  $('results-count').textContent = filtered.length+' جهة';
+  $('status').textContent = 'نعرض أحدث مادة أمكن جلبها من كل مصدر حتى لو كانت أقدم من عدة أيام. منشورات Telegram العامة تُجلب مباشرة عند نجاح الوصول؛ أما X فيظهر كرابط حساب إلى حين تفعيل موصل موثوق لجلب منشوراته.';
+  $('status').className = 'status-message';
+  $('stat-total').textContent = filtered.length; $('stat-urgent').textContent = '—'; $('stat-important').textContent = '—';
+  const tabs = [
+    ['all','كل المصادر'],['Telegram','Telegram'],['X','X / تويتر'],['website','المواقع']
+  ];
+  const tabHtml = '<div class="source-workspace"><div class="source-filter-bar">'+tabs.map(([key,label]) =>
+    '<button type="button" class="source-filter '+(state.sourceFilter===key?'active':'')+'" data-source-filter="'+key+'">'+label+'</button>'
+  ).join('')+'</div><div class="source-filter-caption">اختر نافذة المصادر التي تريد متابعتها. تظهر أحدث مادة متاحة مع وقت النشر ورابطها الأصلي.</div></div>';
+  const groupsHtml = groups.map(group => {
+    const items = filtered.filter(source => source.group === group);
+    if (!items.length) return '';
     return '<section class="source-group"><div class="source-group-heading"><h3>'+escapeHtml(group)+'</h3><span>'+items.length+' جهات</span></div><div class="source-grid">'+items.map(source => {
       const latest = latestForSource(source);
-      const latestHtml = latest ? '<div class="source-latest"><span class="source-latest-label">أحدث خبر مرصود</span><strong>'+escapeHtml(latest.title)+'</strong><p>'+escapeHtml(latest.description || 'لا يتوفر مقتطف من الناشر.')+'</p><div class="source-latest-meta">'+publicationMeta(latest.publishedAt)+'</div><a class="source-read-link" href="'+escapeHtml(latest.url)+'" target="_blank" rel="noopener noreferrer">متابعة القراءة من المصدر ↗</a></div>' : '<div class="source-latest source-latest-empty"><span class="source-latest-label">لا توجد مادة مرصودة حالياً</span><p>سيظهر هنا أحدث خبر عند وصول مادة مطابقة من هذا المصدر.</p></div>';
+      const latestHtml = latest
+        ? '<div class="source-latest"><span class="source-latest-label">'+escapeHtml(latest.materialType || 'أحدث مادة مرصودة')+'</span><strong>'+escapeHtml(latest.title || 'منشور دون عنوان')+'</strong><p>'+escapeHtml(latest.description || 'لا يتوفر مقتطف نصي من الناشر.')+'</p><div class="source-latest-meta">'+publicationMeta(latest.publishedAt)+'</div>'+(latest.observedAt ? '<small class="source-observed">وقت التقاط المادة: '+escapeHtml(relativeDate(latest.observedAt))+'</small>' : '')+(latest.url ? '<a class="source-read-link" href="'+escapeHtml(latest.url)+'" target="_blank" rel="noopener noreferrer">فتح المادة الأصلية ↗</a>' : '')+'</div>'
+        : '<div class="source-latest source-latest-empty"><span class="source-latest-label">لم تصل مادة عبر الربط الحالي</span><p>لا نستبعد المواد القديمة؛ لكن لم نتمكن بعد من جلب مادة قابلة للعرض من هذا المصدر.</p></div>';
       const subsection = source.subsection ? '<div class="source-subsection"><strong>'+escapeHtml(source.subsection.name)+'</strong><span>'+escapeHtml(source.subsection.description)+'</span></div>' : '';
       const platforms = source.platforms.length ? source.platforms.map(platform => '<a href="'+escapeHtml(platform.url)+'" target="_blank" rel="noopener noreferrer">'+escapeHtml(platform.name)+' ↗</a>').join('') : '<span class="source-pending">روابط الحسابات قيد التحقق</span>';
       return '<article class="source-card"><div class="source-card-top"><span class="source-kind">'+escapeHtml(source.kind)+'</span><span class="source-status">'+escapeHtml(source.status)+'</span></div><h4>'+escapeHtml(source.name)+'</h4><p>'+escapeHtml(source.description)+'</p>'+latestHtml+subsection+'<div class="source-platforms">'+platforms+'</div></article>';
     }).join('')+'</div></section>';
   }).join('');
+  $('news-list').innerHTML = tabHtml + groupsHtml;
+  document.querySelectorAll('[data-source-filter]').forEach(button => button.addEventListener('click', () => {
+    state.sourceFilter = button.dataset.sourceFilter;
+    renderSources();
+  }));
 }
 async function loadSources() {
   try {
-    const response = await fetch('/data/sources.json');
-    if (!response.ok) throw new Error('تعذر تحميل دليل المصادر');
-    const data = await response.json();
-    state.sources = data.sources || [];
+    const [directoryResponse, olderFeedResponse, socialResponse] = await Promise.all([
+      fetch('/data/sources.json'),
+      fetch('/api/news?mode=sources'),
+      fetch('/api/social-latest')
+    ]);
+    if (!directoryResponse.ok) throw new Error('تعذر تحميل دليل المصادر');
+    const directory = await directoryResponse.json();
+    state.sources = directory.sources || [];
+    if (olderFeedResponse.ok) {
+      const feed = await olderFeedResponse.json();
+      state.sourceArticles = feed.articles || [];
+    }
+    if (socialResponse.ok) {
+      const social = await socialResponse.json();
+      state.sourcePosts = social.posts || [];
+    }
     if (state.view === 'sources') renderSources();
   } catch (error) {
     console.error(error);
+    if (state.view === 'sources') {
+      $('status').className = 'status-message error';
+      $('status').textContent = 'تعذر تحديث أحدث مواد المصادر الآن. يمكنك إعادة المحاولة من زر تحديث الرصد.';
+    }
   }
 }
 
@@ -156,7 +204,7 @@ document.querySelectorAll('[data-view]').forEach(btn => btn.addEventListener('cl
   if (state.view === 'sources') renderSources(); else if (state.view === 'articles') loadArticles(); else render();
 }));
 ['search','category-filter','importance-filter','sort-filter'].forEach(id => $(id).addEventListener(id==='search'?'input':'change',() => state.view==='articles'?renderArticles():render()));
-$('refresh').addEventListener('click',() => state.view==='articles'?loadArticles():loadNews());
+$('refresh').addEventListener('click',() => state.view==='articles'?loadArticles():state.view==='sources'?loadSources():loadNews());
 updateClock();
 setInterval(updateClock, 1000);
 loadNews();
@@ -164,10 +212,10 @@ loadSources();
 
 // تحديث تلقائي كل خمس دقائق، مع تجنب الطلبات المتداخلة أثناء انشغال التبويب.
 setInterval(() => {
-  if (document.visibilityState === 'visible') loadNews();
+  if (document.visibilityState === 'visible') { loadNews(); if (state.view === 'sources') loadSources(); }
 }, REFRESH_INTERVAL);
 
 // عند العودة إلى التبويب، حدّث فوراً إذا مضت خمس دقائق على آخر جلب ناجح.
 document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible' && Date.now() - lastSuccessfulLoad >= REFRESH_INTERVAL) loadNews();
+  if (document.visibilityState === 'visible' && Date.now() - lastSuccessfulLoad >= REFRESH_INTERVAL) { loadNews(); if (state.view === 'sources') loadSources(); }
 });
