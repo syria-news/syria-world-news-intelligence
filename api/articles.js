@@ -8,6 +8,7 @@ const SEARCHES = [
   { id: 'publisher-editorial', query: '(سوريا OR الشرق الأوسط) (تحليل OR رأي OR مقال OR analysis OR opinion) (site:alaraby.co.uk OR site:ultrasyria.ultrasawt.com OR site:enabbaladi.net OR site:syria.tv OR site:afp.com OR site:theguardian.com OR site:aljazeera.net)', country: 'syria', countryName: 'سوريا' }
 ];
 const GUARDIAN_OPINION = 'https://www.theguardian.com/commentisfree/rss';
+const ALMODON_RSS = 'https://www.almodon.com/rss';
 const MAX_AGE_DAYS = 30;
 function clean(value='') { return String(value).replace(/<[^>]*>/g,' ').replace(/&nbsp;/g,' ').replace(/&amp;/g,'&').replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/\s+/g,' ').trim(); }
 function recent(item) {
@@ -54,11 +55,27 @@ module.exports = async (req,res) => {
         };
       });
     });
+    const almodonJob = parser.parseURL(ALMODON_RSS).then(feed => (feed.items || [])
+      .filter(recent)
+      .filter(item => isSyria((item.title || '')+' '+(item.contentSnippet || '')) || isRegional((item.title || '')+' '+(item.contentSnippet || '')))
+      .slice(0,45).map(item => {
+        const title=clean(item.title || ''), description=clean(item.contentSnippet || item.content || '').slice(0,520);
+        const combined=title+' '+description;
+        return {
+          id:crypto.createHash('sha1').update(item.link || title).digest('hex').slice(0,18),
+          title, description, url:item.link || '', source:'جريدة المدن', author:authorOf(item),
+          publishedAt:item.isoDate || item.pubDate || null,
+          country:countryOf(combined,'arab'),
+          countryName:countryOf(combined,'arab')==='syria'?'سوريا':'عربي وإقليمي',
+          kind:/تحليل|رأي|مقال|قراءة/i.test(combined)?'تحليل/رأي':'مادة صحفية',
+          importance:important(combined)
+        };
+      }));
     const guardianJob = parser.parseURL(GUARDIAN_OPINION).then(feed => (feed.items || []).filter(recent).filter(item => isRegional((item.title || '')+' '+(item.contentSnippet || ''))).slice(0,20).map(item => {
       const title=clean(item.title || ''), description=clean(item.contentSnippet || item.content || '').slice(0,520);
       return { id:crypto.createHash('sha1').update(item.link || title).digest('hex').slice(0,18), title, description, url:item.link || '', source:'The Guardian', author:authorOf(item), publishedAt:item.isoDate || item.pubDate || null, country:'international', countryName:'دولي', kind:'رأي', importance:'مهم' };
     }));
-    const results = await Promise.allSettled([...jobs,guardianJob]);
+    const results = await Promise.allSettled([...jobs,guardianJob,almodonJob]);
     const articles = results.flatMap(result => result.status==='fulfilled'?result.value:[]);
     const unique = [...new Map(articles.filter(a=>a.title).map(a=>[a.title.toLowerCase().replace(/[^\p{L}\p{N}]/gu,''),a])).values()]
       .sort((a,b)=>({syria:0,arab:1,international:2}[a.country]-{syria:0,arab:1,international:2}[b.country]) || (a.importance==='مهم'?-1:1) || new Date(b.publishedAt||0)-new Date(a.publishedAt||0))
