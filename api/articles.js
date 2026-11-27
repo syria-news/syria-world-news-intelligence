@@ -40,7 +40,7 @@ module.exports = async (req,res) => {
     const jobs = SEARCHES.map(async feed => {
       const url = 'https://news.google.com/rss/search?' + new URLSearchParams({q:feed.query,hl:'ar',gl:'TR',ceid:'TR:ar'}).toString();
       const parsed = await parser.parseURL(url);
-      return (parsed.items || []).filter(recent).filter(item => { const text = (item.title || '') + ' ' + (item.contentSnippet || ''); return feed.country === 'syria' ? isSyria(text) : isRegional(text); }).slice(0,35).map(item => {
+      return (parsed.items || []).filter(recent).filter(item => { const text = item.title || ''; return feed.country === 'syria' ? isSyria(text) : isRegional(text); }).slice(0,35).map(item => {
         const title = clean(item.title || '');
         const description = clean(item.contentSnippet || item.content || item.summary || '').slice(0,520);
         const combined = title + ' ' + description;
