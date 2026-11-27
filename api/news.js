@@ -90,7 +90,9 @@ module.exports = async (req, res) => {
       });
     }));
 
-    const directResults = await Promise.allSettled(DIRECT_FEEDS.map(async feed => {
+    const directTargets = selected ? DIRECT_FEEDS.filter(feed => feed.country === selected) : DIRECT_FEEDS;
+    const publisherTargets = selected ? PUBLISHER_SEARCHES.filter(feed => feed.country === selected) : PUBLISHER_SEARCHES;
+    const directResults = await Promise.allSettled(directTargets.map(async feed => {
       const parsed = await parser.parseURL(feed.url);
       return (parsed.items || []).map(item => ({
         id: `${feed.id}-${Buffer.from(item.link || item.title || '').toString('base64').replace(/[^a-z0-9]/gi, '').slice(0, 24)}`,
@@ -106,7 +108,7 @@ module.exports = async (req, res) => {
         importance: importance(`${item.title || ''} ${item.contentSnippet || ''}`)
       }));
     }));
-    const publisherResults = await Promise.allSettled(PUBLISHER_SEARCHES.map(async feed => {
+    const publisherResults = await Promise.allSettled(publisherTargets.map(async feed => {
       const url = 'https://news.google.com/rss/search?' + new URLSearchParams({ q: feed.query, hl: 'ar', gl: 'TR', ceid: 'TR:ar' }).toString();
       const parsed = await parser.parseURL(url);
       return (parsed.items || []).map(item => ({
