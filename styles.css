@@ -202,3 +202,37 @@ body{background:#071426;color:#eaf1f8}
 .flag-glow{width:170px;height:150px;top:20px;background:#16b9a522;filter:blur(35px)}
 @media(max-width:1000px){.masthead-actions{flex-wrap:wrap}}
 @media(max-width:720px){.masthead-actions{justify-content:flex-end}.clock-chip{font-size:10px;padding:7px 8px}.masthead-actions .date-chip{display:none}.news-foot-enhanced{align-items:flex-start}.publication-date,.publication-time{padding:6px 8px}.publication-date strong,.publication-time strong{font-size:11px}.source-latest{padding:11px}.syrian-map-flag{width:108px}.banner-flag-wrap{min-height:110px}}
+
+/* Sources workspace: separate platform windows and clear latest-material panels */
+.source-workspace{margin:4px 0 22px;padding:15px 16px;border:1px solid #294b66;border-radius:14px;background:linear-gradient(120deg,#112b43,#102238);box-shadow:0 8px 22px #0002}
+.source-filter-bar{display:flex;gap:8px;flex-wrap:wrap}
+.source-filter{border:1px solid #34536d;background:#142d45;color:#c1d1df;border-radius:9px;padding:9px 17px;font:600 12px inherit;cursor:pointer;transition:.18s}
+.source-filter:hover{border-color:#55bfb5;color:#fff}
+.source-filter.active{background:linear-gradient(135deg,#1d665f,#164c59);border-color:#3a9e98;color:#fff;box-shadow:0 4px 14px #0b0f1c55}
+.source-filter-caption{font-size:11px;color:#91a9bd;margin-top:11px}
+.source-group{padding:15px;margin:18px 0 24px;border:1px solid #223d56;border-radius:15px;background:linear-gradient(145deg,#0c1e32aa,#10263b66)}
+.source-group-heading{border:0;margin-bottom:14px;padding:0 2px 10px}
+.source-group-heading h3{font-size:15px;letter-spacing:.1px}
+.source-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.source-card{background:linear-gradient(150deg,#172f48,#10243a);border-color:#2d4a64;border-radius:13px;padding:17px;min-width:0}
+.source-card h4{font-size:16px}
+.source-latest{margin-top:14px;padding:13px;border-radius:10px;border:1px solid #31536b;background:linear-gradient(145deg,#0c2034,#102a40)}
+.source-latest-label{display:inline-flex;align-items:center;gap:6px;font-size:10px;color:#6ed6c8;margin-bottom:8px}
+.source-latest-label:before{content:"";width:6px;height:6px;border-radius:50%;background:#42c7b5;box-shadow:0 0 0 3px #42c7b522}
+.source-latest strong{display:block;color:#f1f7fb;font-size:13px;line-height:1.8;margin-bottom:6px}
+.source-latest p{font-size:11px;line-height:1.85;color:#a8bdce;margin:0}
+.source-latest-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px;padding-top:9px;border-top:1px solid #29445c}
+.source-latest-meta .publication-date,.source-latest-meta .publication-time{font-size:10px}
+.source-observed{display:block;color:#91a7bb;font-size:10px;margin-top:8px}
+.source-read-link{display:inline-flex;margin-top:11px;color:#60d7c7;font-size:11px;text-decoration:none}
+.source-latest-empty{border-style:dashed;background:#101f31}
+.source-latest-empty .source-latest-label{color:#b9c8d6}
+.source-latest-empty .source-latest-label:before{background:#8ea5b8;box-shadow:none}
+.source-subsection{margin-top:12px}
+.source-platforms{padding-top:11px;border-top:1px solid #29445b}
+.banner-flag-background{position:absolute;z-index:0;right:4%;top:-20px;width:min(46%,430px);height:270px;display:flex;align-items:center;justify-content:center;opacity:.19;filter:blur(1.35px) saturate(.78);mix-blend-mode:screen;transform:rotate(-2deg);pointer-events:none}
+.banner-flag-background svg{width:100%;height:100%;overflow:visible;filter:drop-shadow(0 16px 28px #0008)}
+.identity-banner:after{z-index:1;background:linear-gradient(90deg,#071629e8 0%,#07162955 46%,#071629a8 100%)}
+.banner-copy{z-index:2}
+@media(max-width:900px){.source-grid{grid-template-columns:1fr}.source-group{padding:11px}.banner-flag-background{right:-8%;top:5px;width:58%;height:205px;opacity:.15}}
+@media(max-width:720px){.source-workspace{padding:11px}.source-filter-bar{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.source-filter{padding:9px 8px}.source-filter-caption{font-size:10px}.source-group{margin:13px 0 18px}.banner-flag-background{right:-18%;top:12px;width:76%;height:170px;opacity:.12;filter:blur(1.7px) saturate(.7)}}
