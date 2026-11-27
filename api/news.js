@@ -29,7 +29,9 @@ const DIRECT_FEEDS = [
 const PUBLISHER_SEARCHES = [
   { id: 'global-agencies', source: 'وكالات دولية: رويترز وAP وAFP وCNN', query: '(site:reuters.com OR site:apnews.com OR site:afp.com OR site:cnn.com)', country: 'international', countryName: 'دولي' },
   { id: 'arab-publishers', source: 'منصات عربية: الجزيرة والعربية والشرق والمشهد', query: '(site:aljazeera.net OR site:alarabiya.net OR site:skynewsarabia.com OR site:asharq.com OR site:almashhad.com)', country: 'arab', countryName: 'عربي وإقليمي' },
-  { id: 'syria-publishers', source: 'مصادر دولية حول سوريا', query: '(سوريا OR دمشق OR حلب) (site:reuters.com OR site:apnews.com OR site:afp.com OR site:bbc.com OR site:aljazeera.net OR site:alarabiya.net)', country: 'syria', countryName: 'سوريا' }
+  { id: 'syria-publishers', source: 'مصادر دولية حول سوريا', query: '(سوريا OR دمشق OR حلب) (site:reuters.com OR site:apnews.com OR site:afp.com OR site:bbc.com OR site:aljazeera.net OR site:alarabiya.net)', country: 'syria', countryName: 'سوريا' },
+  { id: 'syrian-official-media', source: 'الإعلام الرسمي السوري', query: '(site:sana.sy OR site:cb.gov.sy) (سوريا OR دمشق OR حلب OR الحكومة OR مصرف سورية)', country: 'syria', countryName: 'سوريا' },
+  { id: 'arab-newsrooms', source: 'مؤسسات إعلامية عربية', query: '(site:bbc.com/arabic OR site:dw.com/ar OR site:france24.com/ar OR site:asharq.com OR site:aawsat.com)', country: 'arab', countryName: 'عربي وإقليمي' }
 ];
 
 function classify(text) {
