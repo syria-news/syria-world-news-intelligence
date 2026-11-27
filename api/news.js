@@ -198,6 +198,11 @@ module.exports = async (req, res) => {
       countries: WATCHLIST.map(({ id, name }) => ({ id, name })),
       total: unique.length,
       failedFeeds: [...results, ...extraResults].filter(r => r.status === 'rejected').length,
+      failedFeedNames: [
+        ...results.map((r, i) => r.status === 'rejected' ? targets[i].name : null),
+        ...directResults.map((r, i) => r.status === 'rejected' ? directTargets[i].source : null),
+        ...publisherResults.map((r, i) => r.status === 'rejected' ? publisherTargets[i].source : null)
+      ].filter(Boolean),
       note: 'التصنيف والأهمية آليان أوليان، ولا يمثلان تحققاً تحريرياً مستقلاً.'
     });
   } catch (error) {
