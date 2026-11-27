@@ -93,6 +93,10 @@
         {
           "name": "الموقع",
           "url": "https://sana.sy"
+        },
+        {
+          "name": "Facebook",
+          "url": "https://www.facebook.com/SanaNews"
         }
       ]
     },
@@ -407,6 +411,10 @@
         {
           "name": "الموقع",
           "url": "https://asharq.com/"
+        },
+        {
+          "name": "Facebook",
+          "url": "https://www.facebook.com/asharqnews"
         }
       ]
     },
@@ -491,6 +499,32 @@
         {
           "name": "الموقع",
           "url": "https://news.sky.com/"
+        }
+      ]
+    },
+    {
+      "id": "syria-tv",
+      "name": "تلفزيون سوريا",
+      "group": "الإعلام السوري",
+      "kind": "مؤسسة إعلامية سورية",
+      "description": "الموقع الرسمي وتحديثات الأخبار العاجلة والتقارير المنشورة على المنصات الاجتماعية.",
+      "status": "موثق عبر الموقع الرسمي",
+      "platforms": [
+        {
+          "name": "الموقع",
+          "url": "https://www.syria.tv/"
+        },
+        {
+          "name": "Telegram",
+          "url": "https://t.me/televisionsyria"
+        },
+        {
+          "name": "X",
+          "url": "https://x.com/syr_television"
+        },
+        {
+          "name": "Facebook",
+          "url": "https://www.facebook.com/syrtelevision"
         }
       ]
     }
