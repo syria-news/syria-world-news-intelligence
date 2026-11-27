@@ -543,6 +543,28 @@
           "url": "https://whatsapp.com/channel/0029Va6ZVgLEgGfU659Nkq1R"
         }
       ]
+    },
+    {
+      "id": "ultra-syria",
+      "name": "ألترا سوريا",
+      "group": "الإعلام السوري",
+      "kind": "منصة صحفية سورية",
+      "description": "تقارير وتحليلات ومواد صحفية متخصصة بالشأن السوري.",
+      "status": "الموقع الرسمي؛ ربط الرصد قيد الاختبار",
+      "platforms": [
+        {
+          "name": "الموقع الرسمي",
+          "url": "https://ultrasyria.ultrasawt.com/"
+        },
+        {
+          "name": "Telegram",
+          "url": "https://t.me/UltraSawtSyria"
+        },
+        {
+          "name": "YouTube",
+          "url": "https://www.youtube.com/@UltraSyria"
+        }
+      ]
     }
   ]
 }
