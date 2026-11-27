@@ -120,8 +120,7 @@ module.exports = async (req, res) => {
         countryName: feed.countryName,
         category: classify(`${item.title || ''} ${item.contentSnippet || ''}`),
         importance: importance(`${item.title || ''} ${item.contentSnippet || ''}`)
-      };
-      });
+      }));
     }));
     const publisherResults = await Promise.allSettled(publisherTargets.map(async feed => {
       const url = 'https://news.google.com/rss/search?' + new URLSearchParams({ q: feed.query, hl: 'ar', gl: 'TR', ceid: 'TR:ar' }).toString();
@@ -142,7 +141,8 @@ module.exports = async (req, res) => {
         countryName: feed.countryName,
         category: classify(`${item.title || ''} ${item.contentSnippet || ''}`),
         importance: importance(`${item.title || ''} ${item.contentSnippet || ''}`)
-      }));
+        };
+      });
     }));
     const extraResults = [...directResults, ...publisherResults];
     const articles = [
