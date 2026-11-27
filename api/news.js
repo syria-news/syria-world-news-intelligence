@@ -71,6 +71,7 @@ function publisherFromTitle(title, fallback) {
 }
 
 const MAX_ARTICLE_AGE_DAYS = 14;
+const INCLUDE_OLDER_SOURCE_ITEMS = true;
 const MAX_ITEMS_PER_FEED = 30;
 
 function isRecent(item) {
@@ -101,7 +102,7 @@ module.exports = async (req, res) => {
         q: country.query, hl: 'ar', gl: 'TR', ceid: 'TR:ar'
       }).toString();
       const feed = await parser.parseURL(url);
-      return (feed.items || []).filter(isRecent).slice(0, MAX_ITEMS_PER_FEED).map(item => {
+      return (feed.items || []).filter(item => req.query.mode === 'sources' || isRecent(item)).slice(0, MAX_ITEMS_PER_FEED).map(item => {
         const title = cleanHtml(item.title || '');
         const description = cleanHtml(item.contentSnippet || item.content || item.summary || '');
         const combined = `${title} ${description}`;
@@ -142,7 +143,7 @@ module.exports = async (req, res) => {
     const publisherResults = await Promise.allSettled(publisherTargets.map(async feed => {
       const url = 'https://news.google.com/rss/search?' + new URLSearchParams({ q: feed.query, hl: 'ar', gl: 'TR', ceid: 'TR:ar' }).toString();
       const parsed = await parser.parseURL(url);
-      const items = (parsed.items || []).filter(isRecent).filter(item => feed.id !== 'syria-publishers' || isSyriaRelated(`${item.title || ''} ${item.contentSnippet || ''}`)).slice(0, MAX_ITEMS_PER_FEED);
+      const items = (parsed.items || []).filter(item => req.query.mode === 'sources' || isRecent(item)).filter(item => feed.id !== 'syria-publishers' || isSyriaRelated(`${item.title || ''} ${item.contentSnippet || ''}`)).slice(0, MAX_ITEMS_PER_FEED);
       return items.map(item => {
         const title = cleanHtml(item.title || '');
         const sourceName = item.source?.name || publisherFromTitle(title, feed.source);
