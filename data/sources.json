@@ -1,10 +1,12 @@
 {
   "title": "المصادر الرسمية",
-  "updatedAt": "2026-11-26",
+  "updatedAt": "2026-11-27",
   "groups": [
     "مؤسسات الدولة",
     "الوزارات والهيئات",
-    "الإعلام الرسمي"
+    "الإعلام الرسمي",
+    "الإعلام السوري",
+    "القنوات العربية والدولية"
   ],
   "sources": [
     {
@@ -107,6 +109,162 @@
         {
           "name": "X",
           "url": "https://x.com/althawra_sy"
+        }
+      ]
+    },
+    {
+      "id": "syrian-ministry-info",
+      "name": "وزارة الإعلام السورية",
+      "group": "الإعلام السوري",
+      "kind": "جهة حكومية",
+      "description": "البيانات والتوضيحات والأنشطة الصادرة عن وزارة الإعلام.",
+      "status": "موثق جزئياً",
+      "platforms": [
+        {
+          "name": "Telegram",
+          "url": "https://t.me/SyMOIGov"
+        }
+      ]
+    },
+    {
+      "id": "syrian-radio-tv",
+      "name": "الهيئة العامة للإذاعة والتلفزيون",
+      "group": "الإعلام السوري",
+      "kind": "مؤسسة إعلامية رسمية",
+      "description": "متابعة أخبار ومحتوى مؤسسات البث الرسمي.",
+      "status": "موثق جزئياً",
+      "platforms": [
+        {
+          "name": "Telegram",
+          "url": "https://t.me/GARTSyria"
+        }
+      ]
+    },
+    {
+      "id": "syrian-tv",
+      "name": "قناة السورية",
+      "group": "الإعلام السوري",
+      "kind": "قناة تلفزيونية رسمية",
+      "description": "الأخبار والتغطيات المنشورة عبر قناة السورية.",
+      "status": "موثق جزئياً",
+      "platforms": [
+        {
+          "name": "Telegram",
+          "url": "https://t.me/Syrian_Tv"
+        }
+      ]
+    },
+    {
+      "id": "alikhbariah-syria",
+      "name": "الإخبارية السورية",
+      "group": "الإعلام السوري",
+      "kind": "قناة إخبارية رسمية",
+      "description": "الأخبار والتغطيات المنشورة عبر الإخبارية السورية.",
+      "status": "موثق جزئياً",
+      "platforms": [
+        {
+          "name": "Telegram",
+          "url": "https://t.me/AlekhbariahSY"
+        }
+      ]
+    },
+    {
+      "id": "aljazeera-arabic",
+      "name": "قناة الجزيرة",
+      "group": "القنوات العربية والدولية",
+      "kind": "قناة إخبارية عربية",
+      "description": "متابعة التغطيات العربية والدولية، مع التقاط المواد المتعلقة بسوريا.",
+      "status": "موثق جزئياً",
+      "platforms": [
+        {
+          "name": "Telegram",
+          "url": "https://t.me/ajanews"
+        },
+        {
+          "name": "X",
+          "url": "https://x.com/AJArabic"
+        }
+      ]
+    },
+    {
+      "id": "aljazeera-syria",
+      "name": "الجزيرة سوريا",
+      "group": "القنوات العربية والدولية",
+      "kind": "قناة/مسار متخصص بسوريا",
+      "description": "مصدر متخصص بمتابعة أخبار سوريا؛ يلزم استكمال التحقق من تبعيته الرسمية للجزيرة قبل اعتماد صفته الرسمية.",
+      "status": "قيد التحقق",
+      "platforms": [
+        {
+          "name": "Telegram",
+          "url": "https://t.me/ajasyr"
+        }
+      ]
+    },
+    {
+      "id": "alarabiya",
+      "name": "العربية",
+      "group": "القنوات العربية والدولية",
+      "kind": "قناة إخبارية عربية",
+      "description": "متابعة التغطيات العربية والدولية ذات الصلة بسوريا والمنطقة.",
+      "status": "موثق جزئياً",
+      "platforms": [
+        {
+          "name": "Telegram",
+          "url": "https://t.me/alarabiya"
+        },
+        {
+          "name": "X",
+          "url": "https://x.com/AlArabiya"
+        }
+      ]
+    },
+    {
+      "id": "alhadath",
+      "name": "العربية الحدث",
+      "group": "القنوات العربية والدولية",
+      "kind": "قناة إخبارية عربية",
+      "description": "متابعة الأخبار العاجلة والتغطيات السياسية والميدانية ذات الصلة بسوريا والمنطقة.",
+      "status": "موثق جزئياً",
+      "platforms": [
+        {
+          "name": "Telegram",
+          "url": "https://t.me/alarabiya_alhadath1"
+        },
+        {
+          "name": "X",
+          "url": "https://x.com/alhadath"
+        }
+      ]
+    },
+    {
+      "id": "almashhad",
+      "name": "المشهد",
+      "group": "القنوات العربية والدولية",
+      "kind": "قناة ومنصة إخبارية عربية",
+      "description": "متابعة التغطيات والبرامج والمواد المتعلقة بالشأن العربي والسوري.",
+      "status": "موثق جزئياً",
+      "platforms": [
+        {
+          "name": "Telegram",
+          "url": "https://t.me/almashhadmedia"
+        },
+        {
+          "name": "X",
+          "url": "https://x.com/almashhadmedia"
+        }
+      ]
+    },
+    {
+      "id": "skynewsarabia",
+      "name": "سكاي نيوز عربية",
+      "group": "القنوات العربية والدولية",
+      "kind": "قناة إخبارية عربية",
+      "description": "متابعة التغطيات العربية والدولية، مع تصفية الأخبار المرتبطة بسوريا.",
+      "status": "موثق جزئياً",
+      "platforms": [
+        {
+          "name": "X",
+          "url": "https://x.com/skynewsarabia"
         }
       ]
     }
