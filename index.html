@@ -61,21 +61,29 @@
         <p>عينٌ على الحدث… وصورةٌ تربط التفاصيل</p>
         <div class="banner-tags"><span>سوريا</span><span>المنطقة</span><span>العالم</span></div>
       </div>
-      <div class="banner-flag-wrap">
-        <div class="flag-glow"></div>
-        <svg class="syrian-map-flag" viewBox="0 0 200 220" role="img" aria-label="خريطة سوريا بألوان العلم السوري">
+      <div class="banner-flag-background" aria-hidden="true">
+        <svg viewBox="0 0 420 240" preserveAspectRatio="xMidYMid meet">
           <defs>
-            <clipPath id="syriaMapClip"><path d="M37 18 L126 17 L145 28 L164 43 L158 62 L174 78 L160 96 L171 113 L155 130 L164 148 L145 164 L123 174 L101 190 L82 174 L63 166 L48 150 L35 133 L24 109 L31 88 L19 69 L34 51 L29 34 Z"/></clipPath>
-            <linearGradient id="syriaMapShade" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".12"/><stop offset=".55" stop-color="#000" stop-opacity=".02"/><stop offset="1" stop-color="#000" stop-opacity=".2"/></linearGradient>
+            <linearGradient id="flagFabric" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity=".2"/><stop offset=".5" stop-color="#ffffff" stop-opacity="0"/><stop offset="1" stop-color="#000000" stop-opacity=".24"/></linearGradient>
+            <filter id="flagWave" x="-10%" y="-15%" width="120%" height="130%">
+              <feTurbulence type="fractalNoise" baseFrequency=".012 .045" numOctaves="2" seed="8" result="noise"/>
+              <feDisplacementMap in="SourceGraphic" in2="noise" scale="13" xChannelSelector="R" yChannelSelector="G"/>
+            </filter>
+            <clipPath id="flagClip"><path d="M22 35 Q105 12 205 35 T398 35 L398 202 Q300 224 205 202 T22 202Z"/></clipPath>
           </defs>
-          <g clip-path="url(#syriaMapClip)">
-            <rect x="0" y="0" width="200" height="73.5" fill="#007A3D"/><rect x="0" y="73.5" width="200" height="73.5" fill="#fff"/><rect x="0" y="147" width="200" height="73" fill="#000"/>
-            <g fill="#CE1126"><path d="M61 91l4 12h13l-10.5 7.6 4 12L61 115l-10.5 7.6 4-12L44 103h13z"/><path d="M100 91l4 12h13l-10.5 7.6 4 12L100 115l-10.5 7.6 4-12L83 103h13z"/><path d="M139 91l4 12h13l-10.5 7.6 4 12L139 115l-10.5 7.6 4-12L122 103h13z"/></g>
-            <rect width="200" height="220" fill="url(#syriaMapShade)"/>
+          <g clip-path="url(#flagClip)" filter="url(#flagWave)">
+            <rect x="20" y="30" width="380" height="58" fill="#007A3D"/>
+            <rect x="20" y="88" width="380" height="58" fill="#fff"/>
+            <rect x="20" y="146" width="380" height="58" fill="#000"/>
+            <g fill="#CE1126">
+              <path d="M132 99l5 14h15l-12 9 4.5 14-12.5-8.5-12.5 8.5 4.5-14-12-9h15z"/>
+              <path d="M210 99l5 14h15l-12 9 4.5 14-12.5-8.5-12.5 8.5 4.5-14-12-9h15z"/>
+              <path d="M288 99l5 14h15l-12 9 4.5 14-12.5-8.5-12.5 8.5 4.5-14-12-9h15z"/>
+            </g>
+            <rect x="20" y="30" width="380" height="174" fill="url(#flagFabric)"/>
           </g>
-          <path d="M37 18 L126 17 L145 28 L164 43 L158 62 L174 78 L160 96 L171 113 L155 130 L164 148 L145 164 L123 174 L101 190 L82 174 L63 166 L48 150 L35 133 L24 109 L31 88 L19 69 L34 51 L29 34 Z" fill="none" stroke="#c5e2ed" stroke-width="2.5" stroke-linejoin="round"/>
+          <path d="M22 35 Q105 12 205 35 T398 35 L398 202 Q300 224 205 202 T22 202Z" fill="none" stroke="#d8edf5" stroke-opacity=".34" stroke-width="2"/>
         </svg>
-        <span class="flag-caption">سوريا في قلب المشهد</span>
       </div>
       <div class="banner-orbit orbit-one"></div><div class="banner-orbit orbit-two"></div>
     </section>
