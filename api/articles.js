@@ -40,13 +40,13 @@ module.exports = async (req,res) => {
     const jobs = SEARCHES.map(async feed => {
       const url = 'https://news.google.com/rss/search?' + new URLSearchParams({q:feed.query,hl:'ar',gl:'TR',ceid:'TR:ar'}).toString();
       const parsed = await parser.parseURL(url);
-      return (parsed.items || []).filter(recent).filter(item => { const text = (item.title || '') + ' ' + (item.contentSnippet || item.content || ''); return feed.country === 'syria' ? isSyria(text) : isRegional(text); }).slice(0,35).map(item => {
+      return (parsed.items || []).filter(recent).filter(item => { const text = (item.title || '') + ' ' + (item.contentSnippet || ''); return feed.country === 'syria' ? isSyria(text) : isRegional(text); }).slice(0,35).map(item => {
         const title = clean(item.title || '');
         const description = clean(item.contentSnippet || item.content || item.summary || '').slice(0,520);
         const combined = title + ' ' + description;
         return {
           id: crypto.createHash('sha1').update(item.link || title).digest('hex').slice(0,18),
-          title, description, url:item.link || '', source:item.source?.name || 'مصدر صحفي',
+          title, description, url:item.link || '', source:item.source?.name || (String(title).match(/\\s[-–—]\\s([^|]+)$/)?.[1]?.trim()) || 'مصدر صحفي',
           author:(item.creator || item.author || item['dc:creator']) ? clean(item.creator || item.author || item['dc:creator']) : 'غير محدد', publishedAt:item.isoDate || item.pubDate || null,
           country:countryOf(combined,feed.country), countryName:countryOf(combined,feed.country)==='syria'?'سوريا':feed.countryName,
           kind:/رأي|opinion|commentary/i.test(combined)?'رأي':/تحليل|analysis|قراءة/i.test(combined)?'تحليل':'مقال',
