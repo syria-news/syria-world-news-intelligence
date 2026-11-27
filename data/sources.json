@@ -555,14 +555,20 @@
         {
           "name": "الموقع الرسمي",
           "url": "https://ultrasyria.ultrasawt.com/"
-        },
-        {
-          "name": "Telegram",
-          "url": "https://t.me/UltraSawtSyria"
-        },
+        }
+      ]
+    },
+    {
+      "id": "alaraby-syria",
+      "name": "التلفزيون العربي – سوريا",
+      "group": "القنوات العربية والدولية",
+      "kind": "قناة إخبارية متخصصة بالشأن السوري",
+      "description": "متابعة التغطيات والبرامج الإخبارية المتعلقة بسوريا عبر قناة التلفزيون العربي – سوريا.",
+      "status": "قناة موثقة على YouTube",
+      "platforms": [
         {
           "name": "YouTube",
-          "url": "https://www.youtube.com/@UltraSyria"
+          "url": "https://www.youtube.com/@AlarabyTvSY"
         }
       ]
     }
