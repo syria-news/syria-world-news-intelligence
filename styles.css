@@ -319,3 +319,6 @@ body{background:#071426;color:#eaf1f8}
 /* Slightly more visible Syrian flag while keeping the soft background treatment */
 .banner-flag-background{opacity:.24;filter:blur(1px) saturate(.82);width:min(50%,470px)}
 @media(max-width:720px){.banner-flag-background{opacity:.18;filter:blur(1.3px) saturate(.78);width:78%}}
+
+.market-item .market-quote-age{font-size:8px;color:#78bdb5}
+.market-updated{max-width:100px;line-height:1.4}
