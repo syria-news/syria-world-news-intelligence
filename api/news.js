@@ -113,7 +113,12 @@ function arabicPublisher(name) {
     'Deutsche Welle':'دويتشه فيله',
     'DW':'دويتشه فيله',
     'France 24':'فرانس 24',
-    'The Guardian':'الغارديان'
+    'The Guardian':'الغارديان',
+    'Reuters':'رويترز',
+    'Anadolu Ajansı':'وكالة الأناضول',
+    'Associated Press':'أسوشيتد برس',
+    'AP':'أسوشيتد برس',
+    'CNN':'سي إن إن'
   };
   return map[name] || name;
 }
@@ -214,6 +219,15 @@ module.exports = async (req, res) => {
       ...results.flatMap(r => r.status === 'fulfilled' ? r.value : []),
       ...extraResults.flatMap(r => r.status === 'fulfilled' ? r.value : [])
     ];
+    // Translate every English international headline/summary, including Google News publisher-search results.
+    await Promise.all(articles.filter(article => article.country === 'international' && !/[\\u0600-\\u06FF]/.test(article.title || '')).map(async article => {
+      const translated = await translateToArabic((article.title || '') + (article.description ? '\\n\\n' + article.description : ''));
+      const pieces = translated.split(/\\n\\s*\\n/);
+      article.title = pieces[0] || article.title;
+      article.description = (pieces.slice(1).join(' ') || article.description || '').slice(0, 420);
+      article.source = arabicPublisher(article.source);
+      article.sourceLinks = (article.sourceLinks || []).map(link => ({ ...link, name: arabicPublisher(link.name) }));
+    }));
     // Merge exact-title duplicates instead of silently dropping secondary source links.
     const merged = new Map();
     for (const article of articles) {
