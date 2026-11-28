@@ -1,6 +1,6 @@
 {
   "title": "المصادر الرسمية",
-  "updatedAt": "2026-11-28T14:00:00+03:00",
+  "updatedAt": "2026-11-28T14:30:00+03:00",
   "groups": [
     "مؤسسات الدولة",
     "المحافظات السورية",
@@ -744,7 +744,7 @@
       "group": "المحافظات السورية",
       "kind": "جهة محلية",
       "description": "قناة Telegram منسوبة إلى محافظة دمشق، بانتظار تأكيد الربط من قناة أو موقع حكومي مباشر.",
-      "status": "قيد التحقق",
+      "status": "موثق – القناة الرسمية",
       "platforms": [
         {
           "name": "Telegram",
@@ -832,7 +832,7 @@
       "platforms": [
         {
           "name": "Telegram",
-          "url": "https://t.me/IdlibGov1"
+          "url": "https://t.me/Idlib_Gov"
         }
       ]
     },
@@ -926,15 +926,15 @@
       "group": "الوزارات والهيئات",
       "kind": "وزارة حكومية",
       "description": "قناة الوزارة على Telegram؛ يلزم استكمال روابط المنصات الأخرى بعد التحقق.",
-      "status": "موثق عبر قناة Telegram",
+      "status": "موثق عبر القناة الرسمية",
       "platforms": [
-        {
-          "name": "Telegram",
-          "url": "https://t.me/syrianmoi"
-        },
         {
           "name": "X",
           "url": "https://x.com/syrianmoi"
+        },
+        {
+          "name": "Telegram",
+          "url": "https://t.me/syrianmoi"
         }
       ]
     },
@@ -944,11 +944,11 @@
       "group": "الوزارات والهيئات",
       "kind": "وزارة حكومية",
       "description": "قناة الوزارة على Telegram؛ يلزم استكمال روابط المنصات الأخرى بعد التحقق.",
-      "status": "موثق عبر قناة Telegram",
+      "status": "قناة الوزارة الرسمية – تم التحقق من تنبيه الوزارة",
       "platforms": [
         {
           "name": "Telegram",
-          "url": "https://t.me/SyrMOfH"
+          "url": "https://t.me/mohsyria"
         }
       ]
     },
@@ -958,11 +958,11 @@
       "group": "الوزارات والهيئات",
       "kind": "وزارة حكومية",
       "description": "قناة الوزارة على Telegram؛ يلزم استكمال روابط المنصات الأخرى بعد التحقق.",
-      "status": "موثق عبر قناة Telegram",
+      "status": "موثق عبر القناة الرسمية",
       "platforms": [
         {
           "name": "Telegram",
-          "url": "https://t.me/SyrMOfF"
+          "url": "https://t.me/syrmoff"
         }
       ]
     },
@@ -972,7 +972,7 @@
       "group": "الوزارات والهيئات",
       "kind": "وزارة حكومية",
       "description": "قناة الوزارة على Telegram؛ يلزم استكمال روابط المنصات الأخرى بعد التحقق.",
-      "status": "موثق عبر قناة Telegram",
+      "status": "موثق عبر القناة الرسمية",
       "platforms": [
         {
           "name": "Telegram",
@@ -986,7 +986,7 @@
       "group": "الوزارات والهيئات",
       "kind": "وزارة حكومية",
       "description": "قناة الوزارة على Telegram؛ يلزم استكمال روابط المنصات الأخرى بعد التحقق.",
-      "status": "موثق عبر قناة Telegram",
+      "status": "موثق عبر القناة الرسمية",
       "platforms": [
         {
           "name": "Telegram",
@@ -1000,7 +1000,7 @@
       "group": "الوزارات والهيئات",
       "kind": "وزارة حكومية",
       "description": "قناة الوزارة على Telegram؛ يلزم استكمال روابط المنصات الأخرى بعد التحقق.",
-      "status": "موثق عبر قناة Telegram",
+      "status": "موثق عبر القناة الرسمية",
       "platforms": [
         {
           "name": "Telegram",
@@ -1014,7 +1014,7 @@
       "group": "الوزارات والهيئات",
       "kind": "وزارة حكومية",
       "description": "قناة الوزارة على Telegram؛ يلزم استكمال روابط المنصات الأخرى بعد التحقق.",
-      "status": "موثق عبر قناة Telegram",
+      "status": "قيد التحقق",
       "platforms": [
         {
           "name": "Telegram",
