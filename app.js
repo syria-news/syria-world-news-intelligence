@@ -74,6 +74,10 @@ function getFiltered() {
   if ($('sort-filter').value === 'priority') list.sort((a,b) => ({syria:0,arab:1,international:2}[a.country] ?? 3) - ({syria:0,arab:1,international:2}[b.country] ?? 3) || ({'عاجل':0,'مهم':1,'عادي':2}[a.importance] - {'عاجل':0,'مهم':1,'عادي':2}[b.importance]) || new Date(b.publishedAt || 0)-new Date(a.publishedAt || 0));
   return list;
 }
+function isEconomicNews(item) {
+  const text = ((item.category||'')+' '+(item.title||'')+' '+(item.description||'')+' '+(item.source||'')).toLowerCase();
+  return /اقتصاد|اقتصادي|اقتصادية|مال|مالي|مالية|مصرف|بنك|تجارة|تجاري|استثمار|استثماري|ميزانية|موازنة|ليرة|دولار|عملة|عملات|ذهب|نفط|غاز|طاقة|وقود|بورصة|أسهم|سندات|تضخم|فائدة|نمو اقتصادي|economy|economic|finance|financial|market|markets|oil|gold|currency|currencies|banking|trade|investment|inflation|interest rate/.test(text);
+}
 function newsCardMarkup(a) {
   return `<article class="news-card"><div class="news-main"><div class="meta-row"><span class="pill">${escapeHtml(a.countryName)}</span><span class="pill relevance">${a.country==='syria'?'أولوية سورية':a.country==='international'?'دولي':'عربي/إقليمي'}</span><span class="pill category">${escapeHtml(a.category)}</span><span class="pill ${a.importance==='عاجل'?'urgent':a.importance==='مهم'?'important':''}">${escapeHtml(a.importance)}</span></div><h4>${escapeHtml(a.title)}</h4>${a.description ? `<p>${escapeHtml(a.description)}</p>` : ''}<div class="news-foot news-foot-enhanced"><div class="publication-meta">${publicationMeta(a.publishedAt)}</div><span class="source-name">المصدر: ${escapeHtml(a.source || 'غير محدد')}</span></div></div><div class="news-actions"><button class="save-btn ${state.saved.has(a.id)?'saved':''}" data-save="${escapeHtml(a.id)}" title="حفظ الخبر">${state.saved.has(a.id)?'★':'☆'}</button>${a.url?`<a class="source-link" href="${escapeHtml(a.url)}" target="_blank" rel="noopener noreferrer">المصدر الأصلي ↗</a>`:''}</div></article>`;
 }
@@ -81,7 +85,7 @@ function render() {
   if (state.view === 'sources') { renderSources(); return; }
   if (state.view === 'articles') { renderArticles(); return; }
   let list = getFiltered();
-  if (state.view === 'economic') list = list.filter(a => ['اقتصادي','طاقة'].includes(a.category));
+  if (state.view === 'economic') { const q=$('search').value.trim().toLowerCase(); list=state.articles.filter(a=>isEconomicNews(a) && (!q || `${a.title} ${a.description} ${a.source}`.toLowerCase().includes(q)) && ($('importance-filter').value==='all' || a.importance===$('importance-filter').value)); }
   $('stat-total').textContent = state.articles.length;
   $('stat-urgent').textContent = state.articles.filter(a => a.importance === 'عاجل').length;
   $('stat-important').textContent = state.articles.filter(a => a.importance === 'مهم').length;
@@ -93,8 +97,7 @@ function render() {
     const urgentLanes = [
       {id:'syria',title:'عواجل سوريا',hint:'التطورات السورية',items:list.filter(a=>a.country==='syria' && a.importance!=='عادي')},
       {id:'arab',title:'عواجل عربي وإقليمي',hint:'المنطقة والجوار',items:list.filter(a=>a.country!=='syria' && a.country!=='international' && a.importance!=='عادي')},
-      {id:'international',title:'عواجل دولية',hint:'التطورات الدولية',items:list.filter(a=>a.country==='international' && a.importance!=='عادي')},
-      {id:'economic',title:'عواجل اقتصادية',hint:'الأسواق والطاقة والاقتصاد',items:list.filter(a=>['اقتصادي','طاقة'].includes(a.category) && a.importance!=='عادي')}
+      {id:'international',title:'عواجل دولية',hint:'التطورات الدولية',items:list.filter(a=>a.country==='international' && a.importance!=='عادي')}
     ];
     const urgentTotal = urgentLanes.reduce((sum,lane)=>sum+lane.items.length,0);
     $('results-count').textContent = urgentTotal + ' مادة';
@@ -103,13 +106,10 @@ function render() {
     document.querySelectorAll('[data-save]').forEach(btn => btn.addEventListener('click', () => { const id=btn.dataset.save; state.saved.has(id)?state.saved.delete(id):state.saved.add(id); localStorage.setItem('syria-saved',JSON.stringify([...state.saved])); render(); }));
     return;
   }
-  const economicItems = list.filter(a=>['اقتصادي','طاقة'].includes(a.category));
-  const geographicItems = list.filter(a=>!['اقتصادي','طاقة'].includes(a.category));
   const lanes = [
-    {id:'syria',title:'سوريا',hint:'الأولوية التحريرية',items:geographicItems.filter(a=>a.country==='syria')},
-    {id:'arab',title:'عربي وإقليمي',hint:'المنطقة والجوار',items:geographicItems.filter(a=>a.country!=='syria' && a.country!=='international')},
-    {id:'international',title:'دولي',hint:'التطورات الدولية',items:geographicItems.filter(a=>a.country==='international')},
-    {id:'economic',title:'اقتصادي',hint:'الاقتصاد والأسواق والطاقة',items:economicItems}
+    {id:'syria',title:'سوريا',hint:'الأولوية التحريرية',items:list.filter(a=>a.country==='syria')},
+    {id:'arab',title:'عربي وإقليمي',hint:'المنطقة والجوار',items:list.filter(a=>a.country!=='syria' && a.country!=='international')},
+    {id:'international',title:'دولي',hint:'التطورات الدولية',items:list.filter(a=>a.country==='international')}
   ];
   $('news-list').innerHTML = `<div class="news-lanes">${lanes.map(lane=>`<section class="news-lane lane-${lane.id}"><header class="news-lane-head"><div><span class="lane-kicker">${lane.hint}</span><h3>${lane.title}</h3></div><b>${lane.items.length}</b></header><div class="news-lane-scroll">${lane.items.length?lane.items.map(newsCardMarkup).join(''):'<div class="lane-empty">لا توجد مواد ضمن هذا المسار حالياً</div>'}</div></section>`).join('')}</div>`;
   document.querySelectorAll('[data-save]').forEach(btn => btn.addEventListener('click', () => { const id=btn.dataset.save; state.saved.has(id)?state.saved.delete(id):state.saved.add(id); localStorage.setItem('syria-saved',JSON.stringify([...state.saved])); render(); }));
@@ -122,15 +122,15 @@ function renderArticles() {
   if (q) items = items.filter(item => `${item.title} ${item.description} ${item.source} ${item.author || ''}`.toLowerCase().includes(q));
   if ($('importance-filter').value !== 'all') items = items.filter(item => item.importance === $('importance-filter').value);
   items.sort((a,b) => ({syria:0,arab:1,international:2}[a.country] ?? 3) - ({syria:0,arab:1,international:2}[b.country] ?? 3) || ({'مهم':0,'عادي':1}[a.importance] ?? 2) - ({'مهم':0,'عادي':1}[b.importance] ?? 2) || new Date(b.publishedAt || 0)-new Date(a.publishedAt || 0));
-  const isEconomic = item => item.category === 'اقتصادي' || item.category === 'طاقة' || /اقتصاد|مال|أسواق|طاقة/.test((item.kind||'')+' '+(item.title||''));
+  const europeAmerica = item => /أوروبا|أوروبي|بريطانيا|فرنسا|ألمانيا|إيطاليا|إسبانيا|الاتحاد الأوروبي|واشنطن|الولايات المتحدة|أميركا|أمريكا|كندا|البيت الأبيض|الكونغرس|الناتو|europe|european|britain|uk\b|france|germany|italy|spain|european union|washington|united states|u\.s\.|america|canada|white house|congress|nato/i.test((item.title||'')+' '+(item.description||'')+' '+(item.source||''));
   const lanes = [
-    {id:'syria',title:'مقالات سورية',hint:'قراءات وتحليلات سورية',items:items.filter(item=>item.country==='syria' && !isEconomic(item))},
-    {id:'arab',title:'مقالات عربية وإقليمية',hint:'المنطقة والجوار',items:items.filter(item=>item.country==='arab' && !isEconomic(item))},
-    {id:'international',title:'مقالات دولية',hint:'آراء وقراءات دولية',items:items.filter(item=>item.country==='international' && !isEconomic(item))},
-    {id:'economic',title:'اقتصاد وأسواق',hint:'تحليلات اقتصادية ومالية',items:items.filter(isEconomic)}
+    {id:'syria',title:'سوريا',hint:'مقالات وتحليلات سورية',items:items.filter(item=>item.country==='syria')},
+    {id:'arab',title:'الشرق الأوسط',hint:'المنطقة والجوار',items:items.filter(item=>item.country==='arab')},
+    {id:'europe-america',title:'أوروبا وأميركا',hint:'أخبار وقراءات غربية',items:items.filter(item=>item.country==='international' && europeAmerica(item))},
+    {id:'international',title:'دولي وإقليمي',hint:'ملفات العالم والتطورات الدولية',items:items.filter(item=>item.country==='international' && !europeAmerica(item))}
   ];
   $('results-title').textContent = 'المقالات والتحليلات';
-  $('results-subtitle').textContent = 'قراءات وآراء وتحليلات موزعة حسب النطاق الجغرافي';
+  $('results-subtitle').textContent = 'أربع نوافذ تحريرية: سوريا، الشرق الأوسط، أوروبا وأميركا، ودولي وإقليمي';
   $('results-count').textContent = items.length + ' مادة';
   $('stat-total').textContent = items.length;
   $('stat-urgent').textContent = '—';
@@ -157,10 +157,15 @@ async function loadArticles() {
 }
 
 function sourceMatchesArticle(source, article) {
-  const aliases = {'aawsat':['الشرق الأوسط','aawsat.com'],'afp':['فرانس برس','وكالة فرانس برس','AFP','afp.com'],'guardian':['الغارديان','The Guardian','theguardian.com'],'enab-baladi':['عنب بلدي','enabbaladi.net'],'alaraby-newspaper':['العربي الجديد','alaraby.co.uk'],'ultra-syria':['ألترا سوريا','ultrasyria.ultrasawt.com'],'syria-tv':['تلفزيون سوريا','syria.tv'],'almodon':['المدن','almodon.com']};
+  const aliases = {'aawsat':['الشرق الأوسط','aawsat.com'],'afp':['فرانس برس','وكالة فرانس برس','AFP','afp.com'],'guardian':['الغارديان','The Guardian','theguardian.com'],'enab-baladi':['عنب بلدي','enabbaladi.net'],'alaraby-newspaper':['العربي الجديد','alaraby.co.uk'],'ultra-syria':['ألترا سوريا','ultrasyria.ultrasawt.com'],'syria-tv':['تلفزيون سوريا','syria.tv'],'almodon':['المدن','almodon.com'],'reuters':['رويترز','reuters.com'],'ap':['أسوشيتد برس','apnews.com'],'bbc':['بي بي سي','bbc.com'],'skynewsarabia':['سكاي نيوز عربية','skynewsarabia.com'],'aljazeera-arabic':['الجزيرة','aljazeera.net'],'syrian-now-platform':['سوريا الآن','syria now']};
+  const haystack = ((article.source || '')+' '+(article.url || '')+' '+(article.title || '')).toLowerCase();
   const terms = aliases[source.id] || [source.name];
-  const haystack = (article.source || '')+' '+(article.url || '')+' '+(article.title || '');
-  return terms.some(term => haystack.toLowerCase().includes(term.toLowerCase()));
+  if (terms.some(term => haystack.includes(term.toLowerCase()))) return true;
+  const website = (source.platforms || []).find(p => !['Telegram','X','Facebook','Instagram','YouTube','TikTok','WhatsApp'].includes(p.name));
+  if (website?.url && article.url) {
+    try { const host = new URL(website.url).hostname.replace(/^www\./,''); const articleHost = new URL(article.url).hostname.replace(/^www\./,''); if (host && (articleHost === host || articleHost.endsWith('.'+host))) return true; } catch {}
+  }
+  return false;
 }
 function sourceHasPlatform(source, type) {
   return (source.platforms || []).some(platform => type === 'website'
@@ -168,11 +173,11 @@ function sourceHasPlatform(source, type) {
     : platform.name === type);
 }
 function recentForSource(source) {
-  const posts = state.sourcePosts.filter(post => post.sourceId === source.id).map(post => ({...post, materialType:post.platform === 'Telegram' ? 'Telegram' : 'منصة اجتماعية'}));
-  const articles = state.sourceArticles.filter(item => sourceMatchesArticle(source, item)).map(item => ({...item, materialType:'مادة من موجز الأخبار'}));
+  const posts = state.sourcePosts.filter(post => post.sourceId === source.id || (post.sourceName && post.sourceName === source.name)).map(post => ({...post, materialType:post.platform === 'Telegram' ? 'Telegram' : 'منصة اجتماعية'}));
+  const articles = state.sourceArticles.filter(item => sourceMatchesArticle(source, item)).map(item => ({...item, materialType:'خبر من موجز الرصد'}));
   const seen = new Set();
   return [...posts, ...articles].filter(item => { const key=item.url || (item.title||'')+(item.publishedAt||''); if(seen.has(key)) return false; seen.add(key); return true; })
-    .sort((a,b)=>new Date(b.publishedAt||0)-new Date(a.publishedAt||0)).slice(0,5);
+    .sort((a,b)=>new Date(b.publishedAt||b.observedAt||0)-new Date(a.publishedAt||a.observedAt||0)).slice(0,5);
 }
 function latestForSource(source) { return recentForSource(source)[0] || null; }
 function renderSources() {
@@ -202,7 +207,8 @@ function renderSources() {
     if (!items.length) return '';
     return '<section class="source-group"><div class="source-group-heading"><h3>'+escapeHtml(group)+'</h3><span>'+items.length+' جهات</span></div><div class="source-grid">'+items.map(source => {
       const recent = recentForSource(source);
-      const postsHtml = recent.length ? '<details class="source-recent"><summary><span>آخر المواد والمنشورات</span><b>'+recent.length+'</b></summary><div class="source-recent-list">'+recent.map(item=>'<article class="source-post"><div class="source-post-meta"><span>'+escapeHtml(item.materialType||'مادة مرصودة')+'</span><time>'+escapeHtml(relativeAge(item.publishedAt)||relativeDate(item.publishedAt))+'</time></div><strong>'+escapeHtml(item.title||'منشور دون عنوان')+'</strong>'+(item.description?'<p>'+escapeHtml(item.description.slice(0,240))+'</p>':'')+(item.url?'<a href="'+escapeHtml(item.url)+'" target="_blank" rel="noopener noreferrer">فتح المادة الأصلية ↗</a>':'')+'</article>').join('')+'</div></details>' : '<div class="source-latest-empty">لا توجد مواد مرصودة عبر الربط الحالي</div>';
+      const postCard = item => '<article class="source-post"><div class="source-post-meta"><span>'+escapeHtml(item.materialType||'مادة مرصودة')+'</span><time>'+escapeHtml(relativeAge(item.publishedAt)||relativeDate(item.publishedAt))+'</time></div><strong>'+escapeHtml(item.title||'منشور دون عنوان')+'</strong>'+(item.description?'<p>'+escapeHtml(item.description.slice(0,240))+'</p>':'')+(item.url?'<a href="'+escapeHtml(item.url)+'" target="_blank" rel="noopener noreferrer">فتح المادة الأصلية ↗</a>':'')+'</article>';
+      const postsHtml = recent.length ? '<div class="source-recent"><div class="source-recent-label">أحدث مادة مرصودة</div>'+postCard(recent[0])+(recent.length>1?'<details class="source-more"><summary>عرض '+(recent.length-1)+' مواد أخرى</summary><div class="source-recent-list">'+recent.slice(1).map(postCard).join('')+'</div></details>':'')+'</div>' : '<div class="source-latest-empty">لم تصل مواد من هذا المصدر بعد. تظهر هنا عند نجاح التقاطها من القناة أو الموقع.</div>';
       const subsection = source.subsection ? '<div class="source-subsection"><strong>'+escapeHtml(source.subsection.name)+'</strong><span>'+escapeHtml(source.subsection.description)+'</span></div>' : '';
       const platforms = source.platforms.length ? source.platforms.map(platform => '<a href="'+escapeHtml(platform.url)+'" target="_blank" rel="noopener noreferrer">'+escapeHtml(platform.name)+' ↗</a>').join('') : '<span class="source-pending">روابط الحسابات قيد التحقق</span>';
       return '<article class="source-card source-card-compact"><div class="source-card-top"><span class="source-kind">'+escapeHtml(source.kind)+'</span><span class="source-status">'+escapeHtml(source.status)+'</span></div><h4>'+escapeHtml(source.name)+'</h4><div class="source-platforms">'+platforms+'</div>'+postsHtml+subsection+'</article>';
