@@ -3,6 +3,13 @@ const crypto = require('crypto');
 const parser = new Parser({ timeout: 12000, headers: { 'User-Agent': 'SyriaNewsIntelligence/1.0 (+editorial monitoring)' } });
 
 const SEARCHES = [
+  { id:'world-opinion', query:'(تحليل OR مقال رأي OR opinion OR analysis OR editorial) (أوكرانيا OR روسيا OR الصين OR الولايات المتحدة OR أوروبا OR الأمم المتحدة OR العالم)', country:'international', countryName:'دولي' },
+  { id:'middle-east-opinion', query:'(تحليل OR رأي OR مقال OR analysis OR opinion) (لبنان OR فلسطين OR العراق OR تركيا OR إيران OR الخليج OR مصر OR السودان OR اليمن)', country:'arab', countryName:'عربي وإقليمي' },
+  { id:'syria-opinion-wide', query:'(سوريا OR دمشق OR حلب OR إدلب) (تحليل OR رأي OR مقال OR قراءة OR تحقيق OR commentary OR opinion)', country:'syria', countryName:'سوريا' },
+  { id:'europe-america-opinion', query:'(أوروبا OR الاتحاد الأوروبي OR أميركا OR الولايات المتحدة OR بريطانيا OR فرنسا OR ألمانيا) (تحليل OR رأي OR مقال OR opinion OR analysis)', country:'international', countryName:'دولي' },
+  { id:'publisher-opinion-arab', query:'(site:aljazeera.net OR site:alarabiya.net OR site:skynewsarabia.com OR site:asharq.com OR site:aawsat.com OR site:almodon.com) (رأي OR تحليل OR مقال)', country:'arab', countryName:'عربي وإقليمي' },
+  { id:'publisher-opinion-global', query:'(site:reuters.com OR site:apnews.com OR site:bbc.com OR site:theguardian.com OR site:france24.com) (opinion OR analysis OR commentary)', country:'international', countryName:'دولي' },
+
   { id: 'syria-editorial', query: '(سوريا OR دمشق OR حلب OR إدلب OR الحسكة) (مقال OR تحليل OR رأي OR قراءة OR وجهة نظر OR commentary OR analysis)', country: 'syria', countryName: 'سوريا' },
   { id: 'regional-editorial', query: '(الشرق الأوسط OR لبنان OR فلسطين OR العراق OR تركيا OR إيران) (مقال OR تحليل OR رأي OR قراءة OR وجهة نظر OR analysis OR opinion)', country: 'arab', countryName: 'عربي وإقليمي' },
   { id: 'publisher-editorial', query: '(سوريا OR الشرق الأوسط) (تحليل OR رأي OR مقال OR analysis OR opinion) (site:alaraby.co.uk OR site:ultrasyria.ultrasawt.com OR site:enabbaladi.net OR site:syria.tv OR site:afp.com OR site:theguardian.com OR site:aljazeera.net OR site:almodon.com)', country: 'syria', countryName: 'سوريا' },
@@ -99,7 +106,7 @@ module.exports = async (req,res) => {
     }));
     const unique = [...new Map(articles.filter(a=>a.title).map(a=>[a.title.toLowerCase().replace(/[^\p{L}\p{N}]/gu,''),a])).values()]
       .sort((a,b)=>({syria:0,arab:1,international:2}[a.country]-{syria:0,arab:1,international:2}[b.country]) || (a.importance==='مهم'?-1:1) || new Date(b.publishedAt||0)-new Date(a.publishedAt||0))
-      .slice(0,100);
+      .slice(0,180);
     return res.status(200).json({articles:unique,total:unique.length,updatedAt:new Date().toISOString(),failedFeeds:results.filter(r=>r.status==='rejected').length,note:'تجميع آلي أولي للمقالات والتحليلات؛ يلزم تقييم تحريري للأهمية قبل الاعتماد.'});
   } catch(error) {
     return res.status(502).json({error:'تعذر جلب المقالات حالياً',details:error.message});
