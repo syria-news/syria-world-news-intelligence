@@ -89,7 +89,7 @@ function isSyriaRelated(text) {
 const translationCache = new Map();
 async function translateToArabic(value) {
   const text = String(value || '').trim();
-  if (!text || /[\\u0600-\\u06FF]/.test(text)) return text;
+  if (!text || /[\u0600-\u06FF]/.test(text)) return text;
   if (translationCache.has(text)) return translationCache.get(text);
   try {
     const url = 'https://translate.googleapis.com/translate_a/single?' + new URLSearchParams({
@@ -170,9 +170,9 @@ module.exports = async (req, res) => {
         const originalDescription = cleanHtml(item.contentSnippet || item.content || item.summary || '').slice(0, 420);
         let title = originalTitle;
         let description = originalDescription;
-        if (feed.country === 'international' && !/[\\u0600-\\u06FF]/.test(originalTitle)) {
-          const translated = await translateToArabic(originalTitle + (originalDescription ? '\\n\\n' + originalDescription : ''));
-          const pieces = translated.split(/\\n\\s*\\n/);
+        if (feed.country === 'international' && !/[\u0600-\u06FF]/.test(originalTitle)) {
+          const translated = await translateToArabic(originalTitle + (originalDescription ? '\n\n' + originalDescription : ''));
+          const pieces = translated.split(/\n\s*\n/);
           title = pieces[0] || originalTitle;
           description = (pieces.slice(1).join(' ') || originalDescription).slice(0, 420);
         }
@@ -220,9 +220,9 @@ module.exports = async (req, res) => {
       ...extraResults.flatMap(r => r.status === 'fulfilled' ? r.value : [])
     ];
     // Translate every English international headline/summary, including Google News publisher-search results.
-    await Promise.all(articles.filter(article => article.country === 'international' && !/[\\u0600-\\u06FF]/.test(article.title || '')).map(async article => {
-      const translated = await translateToArabic((article.title || '') + (article.description ? '\\n\\n' + article.description : ''));
-      const pieces = translated.split(/\\n\\s*\\n/);
+    await Promise.all(articles.filter(article => article.country === 'international' && !/[\u0600-\u06FF]/.test(article.title || '')).map(async article => {
+      const translated = await translateToArabic((article.title || '') + (article.description ? '\n\n' + article.description : ''));
+      const pieces = translated.split(/\n\s*\n/);
       article.title = pieces[0] || article.title;
       article.description = (pieces.slice(1).join(' ') || article.description || '').slice(0, 420);
       article.source = arabicPublisher(article.source);
