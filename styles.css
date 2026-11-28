@@ -395,3 +395,21 @@ body{background:#071426;color:#eaf1f8}
  .banner-flag-background{grid-column:1;grid-row:2}
  .banner-clock{grid-column:1;grid-row:3}
 }
+
+/* Editorial refresh: centered larger flag and geographic lanes for urgent/articles */
+.identity-banner{grid-template-columns:minmax(190px,1fr) minmax(250px,330px) minmax(210px,1fr);direction:ltr;align-items:center}
+.identity-banner .banner-copy,.identity-banner .banner-clock{direction:rtl}
+.identity-banner .banner-copy{grid-column:3;grid-row:1;justify-self:end;text-align:right}
+.identity-banner .banner-flag-background{position:relative;grid-column:2;grid-row:1;right:auto;top:auto;width:100%;height:260px;opacity:.27;filter:blur(.8px) saturate(.9);transform:scale(1.12) rotate(-1deg);z-index:2}
+.identity-banner .banner-clock{grid-column:1;grid-row:1;justify-self:start}
+.urgent-lanes .news-lane-head{background:linear-gradient(110deg,#3a1d2b,#17283c)}
+.urgent-lanes .news-lane-head h3{color:#fff0f1}
+.urgent-lanes .lane-syria .news-lane-head{border-top-color:#e34e5b}
+.urgent-lanes .lane-arab .news-lane-head{border-top-color:#d77a54}
+.urgent-lanes .lane-international .news-lane-head{border-top-color:#c49a5e}
+.editorial-lanes .news-lane-head{background:linear-gradient(110deg,#153b4b,#112a40)}
+.editorial-lanes .news-lane .news-card{border-right:3px solid #35bcae}
+.source-sort-wrap{display:flex;align-items:center;gap:8px;margin-inline-start:auto;color:#a9c0d1;font-size:11px}
+.source-sort-wrap select{background:#102a42;color:#e5f0f7;border:1px solid #31556d;border-radius:8px;padding:8px 10px;font:inherit}
+@media(max-width:1000px){.identity-banner{grid-template-columns:minmax(150px,1fr) minmax(180px,240px) minmax(170px,1fr)}.identity-banner .banner-flag-background{height:220px}}
+@media(max-width:720px){.identity-banner{grid-template-columns:1fr;direction:rtl;gap:6px}.identity-banner .banner-copy{grid-column:1;grid-row:1;justify-self:stretch}.identity-banner .banner-flag-background{grid-column:1;grid-row:2;width:82%;height:155px;justify-self:center;opacity:.2}.identity-banner .banner-clock{grid-column:1;grid-row:3;justify-self:stretch}.source-sort-wrap{width:100%;margin:4px 0 0}.source-sort-wrap select{flex:1}.urgent-lanes,.editorial-lanes{grid-template-columns:1fr}}
