@@ -18,12 +18,7 @@
       "kind": "جهة رسمية",
       "description": "البيانات والتصريحات الصادرة عن مؤسسة الرئاسة.",
       "status": "موثق",
-      "platforms": [
-        {
-          "name": "X",
-          "url": "https://x.com/Presidency_Sy"
-        }
-      ]
+      "platforms": []
     },
     {
       "id": "parliament",
