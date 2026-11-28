@@ -88,6 +88,11 @@ function render() {
   $('results-count').textContent = `${list.length} مادة`;
   $('results-title').textContent = state.view === 'urgent' ? 'العاجل والأخبار المهمة' : state.view === 'saved' ? 'المحفوظات' : 'آخر التطورات';
   $('results-subtitle').textContent = state.selectedCountry === 'all' ? 'توزيع الأخبار على ثلاثة مسارات تحريرية متزامنة' : `الأخبار المتعلقة بـ ${state.countries.find(c=>c.id===state.selectedCountry)?.name || ''}`;
+  if (state.view === 'urgent') {
+    $('news-list').innerHTML = `<div class="urgent-results-list">${list.length ? list.map(newsCardMarkup).join('') : '<div class="lane-empty">لا توجد مواد عاجلة أو مهمة مطابقة حالياً</div>'}</div>`;
+    document.querySelectorAll('[data-save]').forEach(btn => btn.addEventListener('click', () => { const id=btn.dataset.save; state.saved.has(id)?state.saved.delete(id):state.saved.add(id); localStorage.setItem('syria-saved',JSON.stringify([...state.saved])); render(); }));
+    return;
+  }
   const lanes = [
     {id:'syria',title:'سوريا',hint:'الأولوية التحريرية',items:list.filter(a=>a.country==='syria')},
     {id:'arab',title:'عربي وإقليمي',hint:'المنطقة والجوار',items:list.filter(a=>a.country!=='syria' && a.country!=='international')},
