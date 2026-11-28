@@ -1,6 +1,6 @@
 {
   "title": "المصادر الرسمية",
-  "updatedAt": "2026-11-27",
+  "updatedAt": "2026-11-28T09:36:11.581Z",
   "groups": [
     "مؤسسات الدولة",
     "الوزارات والهيئات",
@@ -13,12 +13,21 @@
   "sources": [
     {
       "id": "presidency",
-      "name": "رئاسة الجمهورية",
+      "name": "رئاسة الجمهورية العربية السورية",
       "group": "مؤسسات الدولة",
       "kind": "جهة رسمية",
-      "description": "البيانات والتصريحات الصادرة عن مؤسسة الرئاسة.",
+      "description": "البيانات والتصريحات الرسمية الصادرة عن مؤسسة رئاسة الجمهورية.",
       "status": "موثق",
-      "platforms": []
+      "platforms": [
+        {
+          "name": "Telegram",
+          "url": "https://t.me/SyPresidency"
+        },
+        {
+          "name": "X",
+          "url": "https://x.com/SyPresidency"
+        }
+      ]
     },
     {
       "id": "parliament",
@@ -655,6 +664,60 @@
         {
           "name": "TikTok",
           "url": "https://www.tiktok.com/@ajsyrianow"
+        }
+      ]
+    },
+    {
+      "id": "president-ahmad-alsharaa",
+      "name": "رئيس الجمهورية – أحمد الشرع",
+      "group": "مؤسسات الدولة",
+      "kind": "حساب رسمي",
+      "description": "الحساب الرسمي لرئيس الجمهورية العربية السورية السيد أحمد الشرع.",
+      "status": "موثق",
+      "platforms": [
+        {
+          "name": "X",
+          "url": "https://x.com/AH_AlSharaa"
+        }
+      ]
+    },
+    {
+      "id": "presidency-general-secretariat",
+      "name": "الأمانة العامة لرئاسة الجمهورية",
+      "group": "مؤسسات الدولة",
+      "kind": "جهة رسمية",
+      "description": "حساب الأمانة العامة لرئاسة الجمهورية على منصة X. الرابط مدخل من المستخدم ولم يتسنَّ التحقق المستقل من الحساب أو العثور على قناة Telegram رسمية مطابقة.",
+      "status": "رابط X بانتظار التحقق",
+      "platforms": [
+        {
+          "name": "X",
+          "url": "https://x.com/SyGSPRCA"
+        }
+      ]
+    },
+    {
+      "id": "foreign-ministry-syria",
+      "name": "وزارة الخارجية والمغتربين السورية",
+      "group": "الوزارات والهيئات",
+      "kind": "وزارة",
+      "description": "البيانات والأنشطة الرسمية لوزارة الخارجية والمغتربين في الجمهورية العربية السورية.",
+      "status": "موثق",
+      "platforms": [
+        {
+          "name": "Telegram",
+          "url": "https://t.me/syrianmofaex1"
+        },
+        {
+          "name": "X",
+          "url": "https://x.com/syrianmofaex"
+        },
+        {
+          "name": "YouTube",
+          "url": "https://www.youtube.com/@syrian-mofaex"
+        },
+        {
+          "name": "الموقع الرسمي",
+          "url": "https://mofaex.gov.sy"
         }
       ]
     }
