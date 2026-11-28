@@ -21,21 +21,18 @@ async function latestFromChannel(source, platform) {
   });
   if (!response.ok) throw new Error('Telegram HTTP ' + response.status);
   const html = await response.text();
-  const candidates = [...html.matchAll(/<div class="tgme_widget_message_wrap[^"]*"[\s\S]*?(?=<div class="tgme_widget_message_wrap|$)/g)];
-  if (!candidates.length) return null;
-  const block = candidates[candidates.length - 1][0];
-  const postId = (block.match(/data-post="([^"]+)"/) || [])[1];
-  const date = (block.match(/<time[^>]*datetime="([^"]+)"/) || [])[1];
-  const messageMatch = block.match(/<div class="tgme_widget_message_text[^"]*"[^>]*>([\s\S]*?)<\/div>/);
-  const description = plainText(messageMatch ? messageMatch[1] : '');
-  const title = description ? description.split('\n')[0].slice(0, 180) : 'منشور من قناة ' + source.name;
-  if (!postId && !date && !description) return null;
-  return {
-    sourceId: source.id, sourceName: source.name, platform: 'Telegram',
-    title, description, publishedAt: date || null,
-    url: postId ? 'https://t.me/' + postId : platform.url,
-    observedAt: new Date().toISOString()
-  };
+  const candidates = [...html.matchAll(/<div class="tgme_widget_message_wrap[^"]*"[^>]*>[\\s\\S]*?(?=<div class="tgme_widget_message_wrap|$)/g)];
+  return candidates.slice(-5).map(match => {
+    const block = match[0];
+    const postId = (block.match(/data-post="([^"]+)"/) || [])[1];
+    const date = (block.match(/<time[^>]*datetime="([^"]+)"/) || [])[1];
+    const messageMatch = block.match(/<div class="tgme_widget_message_text[^"]*"[^>]*>([\\s\\S]*?)<\\/div>/);
+    const description = plainText(messageMatch ? messageMatch[1] : '');
+    const title = description ? description.split('\\n')[0].slice(0, 180) : 'منشور من قناة ' + source.name;
+    if (!postId && !date && !description) return null;
+    return { sourceId:source.id, sourceName:source.name, platform:'Telegram', title, description,
+      publishedAt:date || null, url:postId ? 'https://t.me/' + postId : platform.url, observedAt:new Date().toISOString() };
+  }).filter(Boolean);
 }
 module.exports = async (req, res) => {
   res.setHeader('Cache-Control', 's-maxage=180, stale-while-revalidate=300');
@@ -44,7 +41,7 @@ module.exports = async (req, res) => {
     .filter(platform => platform.name === 'Telegram')
     .map(platform => ({ source, platform })));
   const results = await Promise.allSettled(targets.map(({ source, platform }) => latestFromChannel(source, platform)));
-  const posts = results.flatMap(result => result.status === 'fulfilled' && result.value ? [result.value] : []);
+  const posts = results.flatMap(result => result.status === 'fulfilled' && result.value ? result.value : []);
   return res.status(200).json({
     posts,
     checked: targets.length,
