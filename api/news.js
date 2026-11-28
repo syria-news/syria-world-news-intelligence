@@ -15,6 +15,7 @@ const WATCHLIST = [
   { id: 'israel', name: 'إسرائيل', query: 'إسرائيل OR تل أبيب AND (سوريا OR لبنان OR إيران)' },
   { id: 'lebanon', name: 'لبنان', query: 'لبنان OR بيروت AND (سياسة OR أمن OR إسرائيل)' },
   { id: 'arab', name: 'عربي وإقليمي', query: '(الشرق الأوسط OR الخليج OR الأردن OR العراق OR فلسطين OR مصر OR اليمن OR السودان OR ليبيا) AND (سياسة OR أمن OR دبلوماسية OR اقتصاد)' },
+  { id: 'europe', name: 'أوروبا', query: '(أوروبا OR الاتحاد الأوروبي OR بروكسل OR فرنسا OR ألمانيا OR بريطانيا OR إيطاليا OR إسبانيا) AND (سياسة OR اقتصاد OR أمن OR دبلوماسية OR سوريا)' },
   { id: 'international', name: 'دولي', query: '(أوكرانيا OR الصين OR أوروبا OR الولايات المتحدة OR الأمم المتحدة OR العالم) AND (سياسة OR حرب OR اقتصاد OR دبلوماسية)' }
 ];
 
