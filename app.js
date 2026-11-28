@@ -42,8 +42,8 @@ async function loadMarkets() {
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || 'تعذر جلب الأسواق');
     const items = data.items || [];
-    host.innerHTML = items.map(item => `<div class="market-item"><span class="market-label">${escapeHtml(item.label)}</span><strong>${escapeHtml(item.value)}</strong><small>${escapeHtml(item.unit || '')}</small></div>`).join('') + `<span class="market-updated">تحديث ${relativeAge(data.updatedAt)}</span>`;
-    host.title = 'آخر تحديث: ' + relativeDate(data.updatedAt);
+    host.innerHTML = items.map(item => `<div class="market-item"><span class="market-label">${escapeHtml(item.label)}</span><strong>${escapeHtml(item.value)}</strong><small>${escapeHtml(item.unit || '')}</small><small class="market-quote-age">${item.timestamp ? relativeAge(item.timestamp) : 'وقت التسعير غير متاح'}</small></div>`).join('') + `<span class="market-updated">بيانات إرشادية · ${data.failed ? 'بعض الأسعار غير متاحة' : 'المصادر متصلة'}</span>`;
+    host.title = 'وقت آخر جلب للبيانات: ' + relativeDate(data.updatedAt);
   } catch (error) {
     host.innerHTML = '<span class="market-loading">تعذر تحديث مؤشرات الأسواق</span>';
   }
