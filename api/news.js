@@ -85,6 +85,39 @@ function isSyriaRelated(text) {
   return /سوريا|السوري|السورية|دمشق|حلب|حمص|حماة|إدلب|درعا|السويداء|دير الزور|الرقة|الحسكة|القامشلي|اللاذقية|طرطوس|ريف دمشق|الجولان|syria|syrian|damascus|aleppo/i.test(text || '');
 }
 
+
+const translationCache = new Map();
+async function translateToArabic(value) {
+  const text = String(value || '').trim();
+  if (!text || /[\\u0600-\\u06FF]/.test(text)) return text;
+  if (translationCache.has(text)) return translationCache.get(text);
+  try {
+    const url = 'https://translate.googleapis.com/translate_a/single?' + new URLSearchParams({
+      client: 'gtx', sl: 'auto', tl: 'ar', dt: 't', q: text.slice(0, 1400)
+    }).toString();
+    const response = await fetch(url, { signal: AbortSignal.timeout(6500) });
+    if (!response.ok) throw new Error('translation unavailable');
+    const payload = await response.json();
+    const translated = (payload[0] || []).map(part => part[0] || '').join('').trim();
+    const result = translated || text;
+    translationCache.set(text, result);
+    return result;
+  } catch {
+    return text;
+  }
+}
+function arabicPublisher(name) {
+  const map = {
+    'BBC News':'بي بي سي نيوز',
+    'BBC':'بي بي سي',
+    'Deutsche Welle':'دويتشه فيله',
+    'DW':'دويتشه فيله',
+    'France 24':'فرانس 24',
+    'The Guardian':'الغارديان'
+  };
+  return map[name] || name;
+}
+
 function cleanHtml(value = '') {
   return String(value).replace(/<[^>]*>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&#39;/g, "'").replace(/&quot;/g, '"').replace(/\s+/g, ' ').trim();
 }
@@ -126,18 +159,32 @@ module.exports = async (req, res) => {
     const publisherTargets = selected ? PUBLISHER_SEARCHES.filter(feed => feed.country === selected) : PUBLISHER_SEARCHES;
     const directResults = await Promise.allSettled(directTargets.map(async feed => {
       const parsed = await parser.parseURL(feed.url);
-      return (parsed.items || []).filter(isRecent).slice(0, MAX_ITEMS_PER_FEED).map(item => ({
-        id: stableId(feed.id, item.link || item.title),
-        title: cleanHtml(item.title || ''),
-        description: cleanHtml(item.contentSnippet || item.content || item.summary || '').slice(0, 420),
-        url: item.link || '',
-        source: feed.source,
-        sourceLinks: [{ name: feed.source, url: item.link || '' }],
-        publishedAt: item.isoDate || item.pubDate || null,
-        country: feed.country,
-        countryName: feed.countryName,
-        category: classify(`${item.title || ''} ${item.contentSnippet || ''}`),
-        importance: importance(`${item.title || ''} ${item.contentSnippet || ''}`)
+      const selectedItems = (parsed.items || []).filter(isRecent).slice(0, feed.country === 'international' ? 12 : MAX_ITEMS_PER_FEED);
+      return Promise.all(selectedItems.map(async item => {
+        const originalTitle = cleanHtml(item.title || '');
+        const originalDescription = cleanHtml(item.contentSnippet || item.content || item.summary || '').slice(0, 420);
+        let title = originalTitle;
+        let description = originalDescription;
+        if (feed.country === 'international' && !/[\\u0600-\\u06FF]/.test(originalTitle)) {
+          const translated = await translateToArabic(originalTitle + (originalDescription ? '\\n\\n' + originalDescription : ''));
+          const pieces = translated.split(/\\n\\s*\\n/);
+          title = pieces[0] || originalTitle;
+          description = (pieces.slice(1).join(' ') || originalDescription).slice(0, 420);
+        }
+        const source = arabicPublisher(feed.source);
+        return {
+          id: stableId(feed.id, item.link || originalTitle),
+          title,
+          description,
+          url: item.link || '',
+          source,
+          sourceLinks: [{ name: source, url: item.link || '' }],
+          publishedAt: item.isoDate || item.pubDate || null,
+          country: feed.country,
+          countryName: feed.countryName,
+          category: classify(`${originalTitle} ${originalDescription} ${title} ${description}`),
+          importance: importance(`${originalTitle} ${originalDescription} ${title} ${description}`)
+        };
       }));
     }));
     const publisherResults = await Promise.allSettled(publisherTargets.map(async feed => {
