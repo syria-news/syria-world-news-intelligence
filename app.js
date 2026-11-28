@@ -1,5 +1,5 @@
 const $ = (id) => document.getElementById(id);
-const state = { articles: [], countries: [], selectedCountry: 'all', view: 'all', saved: new Set(JSON.parse(localStorage.getItem('syria-saved') || '[]')), updatedAt: null, sources: [], sourceArticles: [], sourcePosts: [], sourceFilter: 'all', sourceSort: 'latest', editorialItems: [] };
+const state = { articles: [], countries: [], selectedCountry: 'all', view: 'all', saved: new Set(JSON.parse(localStorage.getItem('syria-saved') || '[]')), updatedAt: null, sources: [], sourceArticles: [], sourcePosts: [], sourceFeedPosts: [], sourceFilter: 'all', sourceSort: 'latest', editorialItems: [] };
 const REFRESH_INTERVAL = 5 * 60 * 1000;
 let lastSuccessfulLoad = 0;
 let isLoading = false;
@@ -173,10 +173,11 @@ function sourceHasPlatform(source, type) {
     : platform.name === type);
 }
 function recentForSource(source) {
-  const posts = state.sourcePosts.filter(post => post.sourceId === source.id || (post.sourceName && post.sourceName === source.name)).map(post => ({...post, materialType:post.platform === 'Telegram' ? 'Telegram' : 'منصة اجتماعية'}));
+  const telegram = state.sourcePosts.filter(post => post.sourceId === source.id || (post.sourceName && post.sourceName === source.name)).map(post => ({...post, materialType:'Telegram'}));
+  const searched = (state.sourceFeedPosts||[]).filter(post => post.sourceId === source.id).map(post => ({...post,materialType:'خبر من المصدر'}));
   const articles = state.sourceArticles.filter(item => sourceMatchesArticle(source, item)).map(item => ({...item, materialType:'خبر من موجز الرصد'}));
   const seen = new Set();
-  return [...posts, ...articles].filter(item => { const key=item.url || (item.title||'')+(item.publishedAt||''); if(seen.has(key)) return false; seen.add(key); return true; })
+  return [...telegram,...searched,...articles].filter(item => { const key=item.url || (item.title||'')+(item.publishedAt||''); if(seen.has(key)) return false; seen.add(key); return true; })
     .sort((a,b)=>new Date(b.publishedAt||b.observedAt||0)-new Date(a.publishedAt||a.observedAt||0)).slice(0,5);
 }
 function latestForSource(source) { return recentForSource(source)[0] || null; }
@@ -193,7 +194,7 @@ function renderSources() {
   $('results-title').textContent = 'دليل المصادر';
   $('results-subtitle').textContent = 'آخر مادة متاحة من المصادر، دون استبعاد المواد لمجرد قِدم تاريخها';
   $('results-count').textContent = filtered.length+' جهة';
-  $('status').textContent = 'نعرض أحدث مادة أمكن جلبها من كل مصدر حتى لو كانت أقدم من عدة أيام. منشورات Telegram العامة تُجلب مباشرة عند نجاح الوصول؛ أما X فيظهر كرابط حساب إلى حين تفعيل موصل موثوق لجلب منشوراته.';
+  $('status').textContent = 'نعرض آخر 5 مواد خلال 3 أيام، ونعود إلى آخر أسبوع عند قلة المنشورات. منشورات Telegram العامة تُجلب مباشرة عند نجاح الوصول؛ أما X فيظهر كرابط حساب إلى حين تفعيل موصل موثوق لجلب منشوراته.';
   $('status').className = 'status-message';
   $('stat-total').textContent = filtered.length; $('stat-urgent').textContent = '—'; $('stat-important').textContent = '—';
   const tabs = [
@@ -201,7 +202,7 @@ function renderSources() {
   ];
   const tabHtml = '<div class="source-workspace"><div class="source-filter-bar">'+tabs.map(([key,label]) =>
     '<button type="button" class="source-filter '+(state.sourceFilter===key?'active':'')+'" data-source-filter="'+key+'">'+label+'</button>'
-  ).join('')+'<label class="source-sort-wrap">ترتيب المصادر <select id="source-sort"><option value="latest" '+(state.sourceSort==='latest'?'selected':'')+'>الأحدث نشاطاً</option><option value="oldest" '+(state.sourceSort==='oldest'?'selected':'')+'>الأقدم نشاطاً</option><option value="name" '+(state.sourceSort==='name'?'selected':'')+'>حسب الاسم</option></select></label></div><div class="source-filter-caption">الترتيب الافتراضي حسب أحدث مادة أمكن رصدها من كل مصدر. عند غياب مادة مرصودة يظهر المصدر في نهاية القائمة.</div></div>';
+  ).join('')+'<label class="source-sort-wrap">ترتيب المصادر <select id="source-sort"><option value="latest" '+(state.sourceSort==='latest'?'selected':'')+'>الأحدث نشاطاً</option><option value="oldest" '+(state.sourceSort==='oldest'?'selected':'')+'>الأقدم نشاطاً</option><option value="name" '+(state.sourceSort==='name'?'selected':'')+'>حسب الاسم</option></select></label></div><div class="source-filter-caption">الترتيب حسب أحدث مادة. نعتمد آخر 3 أيام، مع الرجوع إلى أسبوع عند الحاجة.</div></div>';
   const groupsHtml = groups.map(group => {
     const items = filtered.filter(source => source.group === group);
     if (!items.length) return '';
@@ -224,10 +225,11 @@ function renderSources() {
 }
 async function loadSources() {
   try {
-    const [directoryResponse, olderFeedResponse, socialResponse] = await Promise.all([
+    const [directoryResponse, olderFeedResponse, socialResponse, sourceFeedResponse] = await Promise.all([
       fetch('/data/sources.json'),
       fetch('/api/news?mode=sources'),
-      fetch('/api/social-latest')
+      fetch('/api/social-latest'),
+      fetch('/api/source-latest')
     ]);
     if (!directoryResponse.ok) throw new Error('تعذر تحميل دليل المصادر');
     const directory = await directoryResponse.json();
@@ -239,6 +241,10 @@ async function loadSources() {
     if (socialResponse.ok) {
       const social = await socialResponse.json();
       state.sourcePosts = social.posts || [];
+    }
+    if (sourceFeedResponse.ok) {
+      const sourceFeed = await sourceFeedResponse.json();
+      state.sourceFeedPosts = sourceFeed.posts || [];
     }
     if (state.view === 'sources') renderSources();
   } catch (error) {
