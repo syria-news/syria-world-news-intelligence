@@ -37,6 +37,17 @@ function authorOf(item) {
   const match = title.match(/\s[|–—-]\s([^|–—-]+)$/);
   return match ? clean(match[1]) : 'غير محدد';
 }
+async function translateToArabic(value) {
+  const text=String(value||'').trim();
+  if(!text || /[\u0600-\u06FF]/.test(text)) return text;
+  try {
+    const url='https://translate.googleapis.com/translate_a/single?'+new URLSearchParams({client:'gtx',sl:'auto',tl:'ar',dt:'t',q:text.slice(0,1300)}).toString();
+    const response=await fetch(url,{signal:AbortSignal.timeout(6000)});
+    if(!response.ok) return text;
+    const payload=await response.json();
+    return (payload[0]||[]).map(part=>part[0]||'').join('').trim()||text;
+  } catch { return text; }
+}
 module.exports = async (req,res) => {
   res.setHeader('Cache-Control','s-maxage=600, stale-while-revalidate=1200');
   if (req.method !== 'GET') return res.status(405).json({error:'Method not allowed'});
@@ -79,7 +90,13 @@ module.exports = async (req,res) => {
       return { id:crypto.createHash('sha1').update(item.link || title).digest('hex').slice(0,18), title, description, url:item.link || '', source:'The Guardian', author:authorOf(item), publishedAt:item.isoDate || item.pubDate || null, country:'international', countryName:'دولي', kind:'رأي', importance:'مهم' };
     }));
     const results = await Promise.allSettled([...jobs,guardianJob,almodonJob]);
-    const articles = results.flatMap(result => result.status==='fulfilled'?result.value:[]);
+    const rawArticles = results.flatMap(result => result.status==='fulfilled'?result.value:[]);
+    const articles = await Promise.all(rawArticles.map(async item => {
+      if(/[\u0600-\u06FF]/.test(item.title||'')) return item;
+      const translated = await translateToArabic((item.title||'')+(item.description?'\n\n'+item.description:''));
+      const pieces=translated.split(/\n\s*\n/);
+      return {...item,title:pieces[0]||item.title,description:(pieces.slice(1).join(' ')||item.description||'').slice(0,520)};
+    }));
     const unique = [...new Map(articles.filter(a=>a.title).map(a=>[a.title.toLowerCase().replace(/[^\p{L}\p{N}]/gu,''),a])).values()]
       .sort((a,b)=>({syria:0,arab:1,international:2}[a.country]-{syria:0,arab:1,international:2}[b.country]) || (a.importance==='مهم'?-1:1) || new Date(b.publishedAt||0)-new Date(a.publishedAt||0))
       .slice(0,100);
