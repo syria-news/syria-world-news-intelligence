@@ -33,6 +33,21 @@ function publicationMeta(value) {
   const timeText = new Intl.DateTimeFormat('ar', { hour:'2-digit', minute:'2-digit', hourCycle:'h23', timeZone:'Asia/Damascus' }).format(date);
   return '<span class="relative-age">'+relativeAge(value)+'</span><span class="publication-date"><b>تاريخ النشر</b><strong>'+dateText+'</strong></span><span class="publication-time"><b>الوقت</b><strong>'+timeText+'</strong><small>توقيت دمشق</small></span>';
 }
+async function loadMarkets() {
+  const host = $('market-strip');
+  if (!host) return;
+  host.innerHTML = '<span class="market-loading">جاري تحديث الأسواق…</span>';
+  try {
+    const response = await fetch('/api/markets');
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || 'تعذر جلب الأسواق');
+    const items = data.items || [];
+    host.innerHTML = items.map(item => `<div class="market-item"><span class="market-label">${escapeHtml(item.label)}</span><strong>${escapeHtml(item.value)}</strong><small>${escapeHtml(item.unit || '')}</small></div>`).join('') + `<span class="market-updated">تحديث ${relativeAge(data.updatedAt)}</span>`;
+    host.title = 'آخر تحديث: ' + relativeDate(data.updatedAt);
+  } catch (error) {
+    host.innerHTML = '<span class="market-loading">تعذر تحديث مؤشرات الأسواق</span>';
+  }
+}
 function updateClock() {
   const now = new Date();
   $('clock-label').textContent = new Intl.DateTimeFormat('ar', { hour:'2-digit', minute:'2-digit', second:'2-digit', hourCycle:'h23', timeZone:'Asia/Damascus' }).format(now) + ' · توقيت دمشق';
@@ -41,7 +56,11 @@ function updateClock() {
 function renderCountries() {
   const allButton = `<button class="country-btn ${state.selectedCountry === 'all' ? 'selected' : ''}" data-country="all"><i></i>الجميع</button>`;
   $('country-list').innerHTML = allButton + state.countries.map(c => `<button class="country-btn ${state.selectedCountry === c.id ? 'selected' : ''}" data-country="${c.id}"><i></i>${escapeHtml(c.name)}</button>`).join('');
-  document.querySelectorAll('[data-country]').forEach(btn => btn.addEventListener('click', () => { state.selectedCountry = btn.dataset.country; renderCountries(); loadNews(); }));
+  document.querySelectorAll('[data-country]').forEach(btn => btn.addEventListener('click', () => {
+    state.selectedCountry = btn.dataset.country;
+    renderCountries();
+    if (state.view === 'articles') renderArticles(); else loadNews();
+  }));
 }
 function getFiltered() {
   let list = [...state.articles];
@@ -55,6 +74,9 @@ function getFiltered() {
   if ($('sort-filter').value === 'priority') list.sort((a,b) => ({syria:0,arab:1,international:2}[a.country] ?? 3) - ({syria:0,arab:1,international:2}[b.country] ?? 3) || ({'عاجل':0,'مهم':1,'عادي':2}[a.importance] - {'عاجل':0,'مهم':1,'عادي':2}[b.importance]) || new Date(b.publishedAt || 0)-new Date(a.publishedAt || 0));
   return list;
 }
+function newsCardMarkup(a) {
+  return `<article class="news-card"><div class="news-main"><div class="meta-row"><span class="pill">${escapeHtml(a.countryName)}</span><span class="pill relevance">${a.country==='syria'?'أولوية سورية':a.country==='international'?'دولي':'عربي/إقليمي'}</span><span class="pill category">${escapeHtml(a.category)}</span><span class="pill ${a.importance==='عاجل'?'urgent':a.importance==='مهم'?'important':''}">${escapeHtml(a.importance)}</span></div><h4>${escapeHtml(a.title)}</h4>${a.description ? `<p>${escapeHtml(a.description)}</p>` : ''}<div class="news-foot news-foot-enhanced"><div class="publication-meta">${publicationMeta(a.publishedAt)}</div><span class="source-name">المصدر: ${escapeHtml(a.source || 'غير محدد')}</span></div></div><div class="news-actions"><button class="save-btn ${state.saved.has(a.id)?'saved':''}" data-save="${escapeHtml(a.id)}" title="حفظ الخبر">${state.saved.has(a.id)?'★':'☆'}</button>${a.url?`<a class="source-link" href="${escapeHtml(a.url)}" target="_blank" rel="noopener noreferrer">المصدر الأصلي ↗</a>`:''}</div></article>`;
+}
 function render() {
   if (state.view === 'sources') { renderSources(); return; }
   if (state.view === 'articles') { renderArticles(); return; }
@@ -64,13 +86,16 @@ function render() {
   $('stat-important').textContent = state.articles.filter(a => a.importance === 'مهم').length;
   $('side-count').textContent = state.articles.length;
   $('results-count').textContent = `${list.length} مادة`;
-  $('results-title').textContent = state.view === 'urgent' ? 'العاجل والأخبار المهمة' : state.view === 'saved' ? 'المواد المحفوظة' : 'آخر التطورات';
-  $('results-subtitle').textContent = state.selectedCountry === 'all' ? 'الأخبار الواردة من نطاق الرصد' : `الأخبار المتعلقة بـ ${state.countries.find(c=>c.id===state.selectedCountry)?.name || ''}`;
-  if (!list.length) { $('news-list').innerHTML = '<div class="empty-state">لا توجد مواد مطابقة للفلاتر الحالية.</div>'; return; }
-  $('news-list').innerHTML = list.map(a => `<article class="news-card"><div class="news-main"><div class="meta-row"><span class="pill">${escapeHtml(a.countryName)}</span><span class="pill relevance">${a.country==='syria'?'أولوية سورية':a.country==='arab'?'عربي/إقليمي':'دولي'}</span><span class="pill category">${escapeHtml(a.category)}</span><span class="pill ${a.importance==='عاجل'?'urgent':a.importance==='مهم'?'important':''}">${escapeHtml(a.importance)}</span></div><h4>${escapeHtml(a.title)}</h4>${a.description ? `<p>${escapeHtml(a.description)}</p>` : ''}<div class="news-foot news-foot-enhanced"><div class="publication-meta">${publicationMeta(a.publishedAt)}</div><span class="source-name">المصدر: ${escapeHtml(a.source || 'غير محدد')}</span></div></div><div class="news-actions"><button class="save-btn ${state.saved.has(a.id)?'saved':''}" data-save="${escapeHtml(a.id)}" title="حفظ الخبر">${state.saved.has(a.id)?'★':'☆'}</button>${a.url?`<a class="source-link" href="${escapeHtml(a.url)}" target="_blank" rel="noopener noreferrer">المصدر الأصلي ↗</a>`:''}</div></article>`).join('');
+  $('results-title').textContent = state.view === 'urgent' ? 'العاجل والأخبار المهمة' : state.view === 'saved' ? 'المحفوظات' : 'آخر التطورات';
+  $('results-subtitle').textContent = state.selectedCountry === 'all' ? 'توزيع الأخبار على ثلاثة مسارات تحريرية متزامنة' : `الأخبار المتعلقة بـ ${state.countries.find(c=>c.id===state.selectedCountry)?.name || ''}`;
+  const lanes = [
+    {id:'syria',title:'سوريا',hint:'الأولوية التحريرية',items:list.filter(a=>a.country==='syria')},
+    {id:'arab',title:'عربي وإقليمي',hint:'المنطقة والجوار',items:list.filter(a=>a.country!=='syria' && a.country!=='international')},
+    {id:'international',title:'دولي',hint:'التطورات الدولية',items:list.filter(a=>a.country==='international')}
+  ];
+  $('news-list').innerHTML = `<div class="news-lanes">${lanes.map(lane=>`<section class="news-lane lane-${lane.id}"><header class="news-lane-head"><div><span class="lane-kicker">${lane.hint}</span><h3>${lane.title}</h3></div><b>${lane.items.length}</b></header><div class="news-lane-scroll">${lane.items.length?lane.items.map(newsCardMarkup).join(''):'<div class="lane-empty">لا توجد مواد ضمن هذا المسار حالياً</div>'}</div></section>`).join('')}</div>`;
   document.querySelectorAll('[data-save]').forEach(btn => btn.addEventListener('click', () => { const id=btn.dataset.save; state.saved.has(id)?state.saved.delete(id):state.saved.add(id); localStorage.setItem('syria-saved',JSON.stringify([...state.saved])); render(); }));
 }
-
 
 function renderArticles() {
   let items = [...state.editorialItems];
@@ -223,6 +248,8 @@ document.querySelectorAll('[data-view]').forEach(btn => btn.addEventListener('cl
 $('refresh').addEventListener('click',() => state.view==='articles'?loadArticles():state.view==='sources'?loadSources():loadNews());
 updateClock();
 setInterval(updateClock, 1000);
+loadMarkets();
+setInterval(loadMarkets, 5 * 60 * 1000);
 loadNews();
 loadSources();
 
