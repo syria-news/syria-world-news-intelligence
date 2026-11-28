@@ -50,7 +50,7 @@ async function loadMarkets() {
 }
 function updateClock() {
   const now = new Date();
-  $('clock-label').textContent = new Intl.DateTimeFormat('ar', { hour:'2-digit', minute:'2-digit', second:'2-digit', hourCycle:'h23', timeZone:'Asia/Damascus' }).format(now) + ' · توقيت دمشق';
+  $('clock-label').textContent = new Intl.DateTimeFormat('ar', { hour:'2-digit', minute:'2-digit', second:'2-digit', hourCycle:'h23', timeZone:'Asia/Damascus' }).format(now);
   $('today-label').textContent = new Intl.DateTimeFormat('ar', { weekday:'long', day:'numeric', month:'long', year:'numeric', timeZone:'Asia/Damascus' }).format(now);
 }
 function renderCountries() {
@@ -80,19 +80,21 @@ function newsCardMarkup(a) {
 function render() {
   if (state.view === 'sources') { renderSources(); return; }
   if (state.view === 'articles') { renderArticles(); return; }
-  const list = getFiltered();
+  let list = getFiltered();
+  if (state.view === 'economic') list = list.filter(a => ['اقتصادي','طاقة'].includes(a.category));
   $('stat-total').textContent = state.articles.length;
   $('stat-urgent').textContent = state.articles.filter(a => a.importance === 'عاجل').length;
   $('stat-important').textContent = state.articles.filter(a => a.importance === 'مهم').length;
   $('side-count').textContent = state.articles.length;
   $('results-count').textContent = `${list.length} مادة`;
-  $('results-title').textContent = state.view === 'urgent' ? 'العاجل والأخبار المهمة' : state.view === 'saved' ? 'المحفوظات' : 'آخر التطورات';
+  $('results-title').textContent = state.view === 'urgent' ? 'العاجل والأخبار المهمة' : state.view === 'saved' ? 'المحفوظات' : state.view === 'economic' ? 'الرصد الاقتصادي' : 'آخر التطورات';
   $('results-subtitle').textContent = state.selectedCountry === 'all' ? 'توزيع الأخبار على ثلاثة مسارات تحريرية متزامنة' : `الأخبار المتعلقة بـ ${state.countries.find(c=>c.id===state.selectedCountry)?.name || ''}`;
   if (state.view === 'urgent') {
     const urgentLanes = [
       {id:'syria',title:'عواجل سوريا',hint:'التطورات السورية',items:list.filter(a=>a.country==='syria' && a.importance!=='عادي')},
       {id:'arab',title:'عواجل عربي وإقليمي',hint:'المنطقة والجوار',items:list.filter(a=>a.country!=='syria' && a.country!=='international' && a.importance!=='عادي')},
-      {id:'international',title:'عواجل دولية',hint:'التطورات الدولية',items:list.filter(a=>a.country==='international' && a.importance!=='عادي')}
+      {id:'international',title:'عواجل دولية',hint:'التطورات الدولية',items:list.filter(a=>a.country==='international' && a.importance!=='عادي')},
+      {id:'economic',title:'عواجل اقتصادية',hint:'الأسواق والطاقة والاقتصاد',items:list.filter(a=>['اقتصادي','طاقة'].includes(a.category) && a.importance!=='عادي')}
     ];
     const urgentTotal = urgentLanes.reduce((sum,lane)=>sum+lane.items.length,0);
     $('results-count').textContent = urgentTotal + ' مادة';
@@ -101,10 +103,13 @@ function render() {
     document.querySelectorAll('[data-save]').forEach(btn => btn.addEventListener('click', () => { const id=btn.dataset.save; state.saved.has(id)?state.saved.delete(id):state.saved.add(id); localStorage.setItem('syria-saved',JSON.stringify([...state.saved])); render(); }));
     return;
   }
+  const economicItems = list.filter(a=>['اقتصادي','طاقة'].includes(a.category));
+  const geographicItems = list.filter(a=>!['اقتصادي','طاقة'].includes(a.category));
   const lanes = [
-    {id:'syria',title:'سوريا',hint:'الأولوية التحريرية',items:list.filter(a=>a.country==='syria')},
-    {id:'arab',title:'عربي وإقليمي',hint:'المنطقة والجوار',items:list.filter(a=>a.country!=='syria' && a.country!=='international')},
-    {id:'international',title:'دولي',hint:'التطورات الدولية',items:list.filter(a=>a.country==='international')}
+    {id:'syria',title:'سوريا',hint:'الأولوية التحريرية',items:geographicItems.filter(a=>a.country==='syria')},
+    {id:'arab',title:'عربي وإقليمي',hint:'المنطقة والجوار',items:geographicItems.filter(a=>a.country!=='syria' && a.country!=='international')},
+    {id:'international',title:'دولي',hint:'التطورات الدولية',items:geographicItems.filter(a=>a.country==='international')},
+    {id:'economic',title:'اقتصادي',hint:'الاقتصاد والأسواق والطاقة',items:economicItems}
   ];
   $('news-list').innerHTML = `<div class="news-lanes">${lanes.map(lane=>`<section class="news-lane lane-${lane.id}"><header class="news-lane-head"><div><span class="lane-kicker">${lane.hint}</span><h3>${lane.title}</h3></div><b>${lane.items.length}</b></header><div class="news-lane-scroll">${lane.items.length?lane.items.map(newsCardMarkup).join(''):'<div class="lane-empty">لا توجد مواد ضمن هذا المسار حالياً</div>'}</div></section>`).join('')}</div>`;
   document.querySelectorAll('[data-save]').forEach(btn => btn.addEventListener('click', () => { const id=btn.dataset.save; state.saved.has(id)?state.saved.delete(id):state.saved.add(id); localStorage.setItem('syria-saved',JSON.stringify([...state.saved])); render(); }));
@@ -117,10 +122,12 @@ function renderArticles() {
   if (q) items = items.filter(item => `${item.title} ${item.description} ${item.source} ${item.author || ''}`.toLowerCase().includes(q));
   if ($('importance-filter').value !== 'all') items = items.filter(item => item.importance === $('importance-filter').value);
   items.sort((a,b) => ({syria:0,arab:1,international:2}[a.country] ?? 3) - ({syria:0,arab:1,international:2}[b.country] ?? 3) || ({'مهم':0,'عادي':1}[a.importance] ?? 2) - ({'مهم':0,'عادي':1}[b.importance] ?? 2) || new Date(b.publishedAt || 0)-new Date(a.publishedAt || 0));
+  const isEconomic = item => item.category === 'اقتصادي' || item.category === 'طاقة' || /اقتصاد|مال|أسواق|طاقة/.test((item.kind||'')+' '+(item.title||''));
   const lanes = [
-    {id:'syria',title:'مقالات سورية',hint:'قراءات وتحليلات سورية',items:items.filter(item=>item.country==='syria')},
-    {id:'arab',title:'مقالات عربية وإقليمية',hint:'المنطقة والجوار',items:items.filter(item=>item.country==='arab')},
-    {id:'international',title:'مقالات دولية',hint:'آراء وقراءات دولية',items:items.filter(item=>item.country==='international')}
+    {id:'syria',title:'مقالات سورية',hint:'قراءات وتحليلات سورية',items:items.filter(item=>item.country==='syria' && !isEconomic(item))},
+    {id:'arab',title:'مقالات عربية وإقليمية',hint:'المنطقة والجوار',items:items.filter(item=>item.country==='arab' && !isEconomic(item))},
+    {id:'international',title:'مقالات دولية',hint:'آراء وقراءات دولية',items:items.filter(item=>item.country==='international' && !isEconomic(item))},
+    {id:'economic',title:'اقتصاد وأسواق',hint:'تحليلات اقتصادية ومالية',items:items.filter(isEconomic)}
   ];
   $('results-title').textContent = 'المقالات والتحليلات';
   $('results-subtitle').textContent = 'قراءات وآراء وتحليلات موزعة حسب النطاق الجغرافي';
@@ -160,15 +167,14 @@ function sourceHasPlatform(source, type) {
     ? !['Telegram','X'].includes(platform.name)
     : platform.name === type);
 }
-function latestForSource(source) {
-  const posts = state.sourcePosts.filter(post => post.sourceId === source.id);
-  const article = state.sourceArticles.filter(item => sourceMatchesArticle(source, item))
-    .sort((a,b)=>new Date(b.publishedAt || 0)-new Date(a.publishedAt || 0))[0] || null;
-  const post = posts.sort((a,b)=>new Date(b.publishedAt || 0)-new Date(a.publishedAt || 0))[0] || null;
-  if (!post) return article ? {...article, materialType:'مادة من موجز الأخبار'} : null;
-  if (!article || new Date(post.publishedAt || 0) >= new Date(article.publishedAt || 0)) return {...post, materialType:'آخر منشور على Telegram'};
-  return {...article, materialType:'أحدث مادة من الموقع/موجز الأخبار'};
+function recentForSource(source) {
+  const posts = state.sourcePosts.filter(post => post.sourceId === source.id).map(post => ({...post, materialType:post.platform === 'Telegram' ? 'Telegram' : 'منصة اجتماعية'}));
+  const articles = state.sourceArticles.filter(item => sourceMatchesArticle(source, item)).map(item => ({...item, materialType:'مادة من موجز الأخبار'}));
+  const seen = new Set();
+  return [...posts, ...articles].filter(item => { const key=item.url || (item.title||'')+(item.publishedAt||''); if(seen.has(key)) return false; seen.add(key); return true; })
+    .sort((a,b)=>new Date(b.publishedAt||0)-new Date(a.publishedAt||0)).slice(0,5);
 }
+function latestForSource(source) { return recentForSource(source)[0] || null; }
 function renderSources() {
   const filtered = state.sources.filter(source => state.sourceFilter === 'all' || sourceHasPlatform(source, state.sourceFilter));
   const activityTime = source => {
@@ -195,13 +201,11 @@ function renderSources() {
     const items = filtered.filter(source => source.group === group);
     if (!items.length) return '';
     return '<section class="source-group"><div class="source-group-heading"><h3>'+escapeHtml(group)+'</h3><span>'+items.length+' جهات</span></div><div class="source-grid">'+items.map(source => {
-      const latest = latestForSource(source);
-      const latestHtml = latest
-        ? '<div class="source-latest"><span class="source-latest-label">'+escapeHtml(latest.materialType || 'أحدث مادة مرصودة')+'</span><strong>'+escapeHtml(latest.title || 'منشور دون عنوان')+'</strong><p>'+escapeHtml(latest.description || 'لا يتوفر مقتطف نصي من الناشر.')+'</p><div class="source-latest-meta">'+publicationMeta(latest.publishedAt)+'</div>'+(latest.observedAt ? '<small class="source-observed">وقت التقاط المادة: '+escapeHtml(relativeDate(latest.observedAt))+'</small>' : '')+(latest.url ? '<a class="source-read-link" href="'+escapeHtml(latest.url)+'" target="_blank" rel="noopener noreferrer">فتح المادة الأصلية ↗</a>' : '')+'</div>'
-        : '<div class="source-latest source-latest-empty"><span class="source-latest-label">لم تصل مادة عبر الربط الحالي</span><p>لا نستبعد المواد القديمة؛ لكن لم نتمكن بعد من جلب مادة قابلة للعرض من هذا المصدر.</p></div>';
+      const recent = recentForSource(source);
+      const postsHtml = recent.length ? '<details class="source-recent"><summary><span>آخر المواد والمنشورات</span><b>'+recent.length+'</b></summary><div class="source-recent-list">'+recent.map(item=>'<article class="source-post"><div class="source-post-meta"><span>'+escapeHtml(item.materialType||'مادة مرصودة')+'</span><time>'+escapeHtml(relativeAge(item.publishedAt)||relativeDate(item.publishedAt))+'</time></div><strong>'+escapeHtml(item.title||'منشور دون عنوان')+'</strong>'+(item.description?'<p>'+escapeHtml(item.description.slice(0,240))+'</p>':'')+(item.url?'<a href="'+escapeHtml(item.url)+'" target="_blank" rel="noopener noreferrer">فتح المادة الأصلية ↗</a>':'')+'</article>').join('')+'</div></details>' : '<div class="source-latest-empty">لا توجد مواد مرصودة عبر الربط الحالي</div>';
       const subsection = source.subsection ? '<div class="source-subsection"><strong>'+escapeHtml(source.subsection.name)+'</strong><span>'+escapeHtml(source.subsection.description)+'</span></div>' : '';
       const platforms = source.platforms.length ? source.platforms.map(platform => '<a href="'+escapeHtml(platform.url)+'" target="_blank" rel="noopener noreferrer">'+escapeHtml(platform.name)+' ↗</a>').join('') : '<span class="source-pending">روابط الحسابات قيد التحقق</span>';
-      return '<article class="source-card"><div class="source-card-top"><span class="source-kind">'+escapeHtml(source.kind)+'</span><span class="source-status">'+escapeHtml(source.status)+'</span></div><h4>'+escapeHtml(source.name)+'</h4><p>'+escapeHtml(source.description)+'</p>'+latestHtml+subsection+'<div class="source-platforms">'+platforms+'</div></article>';
+      return '<article class="source-card source-card-compact"><div class="source-card-top"><span class="source-kind">'+escapeHtml(source.kind)+'</span><span class="source-status">'+escapeHtml(source.status)+'</span></div><h4>'+escapeHtml(source.name)+'</h4><div class="source-platforms">'+platforms+'</div>'+postsHtml+subsection+'</article>';
     }).join('')+'</div></section>';
   }).join('');
   $('news-list').innerHTML = tabHtml + groupsHtml;
@@ -267,7 +271,7 @@ async function loadNews() {
 
 document.querySelectorAll('[data-view]').forEach(btn => btn.addEventListener('click', () => {
   state.view = btn.dataset.view; document.querySelectorAll('[data-view]').forEach(x=>x.classList.toggle('active',x===btn));
-  $('page-title').textContent = state.view==='urgent'?'عاجل ومهم':state.view==='saved'?'المحفوظات':state.view==='sources'?'دليل المصادر':state.view==='articles'?'مقالات':'موجز الأخبار';
+  $('page-title').textContent = state.view==='urgent'?'عاجل ومهم':state.view==='saved'?'المحفوظات':state.view==='sources'?'دليل المصادر':state.view==='articles'?'مقالات':state.view==='economic'?'اقتصادي':'موجز الأخبار';
   if (state.view === 'sources') renderSources(); else if (state.view === 'articles') loadArticles(); else render();
 }));
 ['search','category-filter','importance-filter','sort-filter'].forEach(id => $(id).addEventListener(id==='search'?'input':'change',() => state.view==='articles'?renderArticles():render()));
