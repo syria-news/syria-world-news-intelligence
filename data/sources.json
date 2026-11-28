@@ -1,8 +1,9 @@
 {
   "title": "المصادر الرسمية",
-  "updatedAt": "2026-11-28T12:45:00+03:00",
+  "updatedAt": "2026-11-28T14:00:00+03:00",
   "groups": [
     "مؤسسات الدولة",
+    "المحافظات السورية",
     "الوزارات والهيئات",
     "الإعلام الرسمي",
     "الإعلام السوري",
@@ -285,6 +286,10 @@
         {
           "name": "الموقع",
           "url": "https://www.reuters.com/"
+        },
+        {
+          "name": "X",
+          "url": "https://x.com/Reuters"
         }
       ]
     },
@@ -730,6 +735,312 @@
         {
           "name": "الموقع الرسمي",
           "url": "https://mofaex.gov.sy"
+        }
+      ]
+    },
+    {
+      "id": "gov-damascus",
+      "name": "محافظة دمشق",
+      "group": "المحافظات السورية",
+      "kind": "جهة محلية",
+      "description": "قناة Telegram منسوبة إلى محافظة دمشق، بانتظار تأكيد الربط من قناة أو موقع حكومي مباشر.",
+      "status": "قيد التحقق",
+      "platforms": [
+        {
+          "name": "Telegram",
+          "url": "https://t.me/DamascusGov1"
+        }
+      ]
+    },
+    {
+      "id": "gov-rural-damascus",
+      "name": "محافظة ريف دمشق",
+      "group": "المحافظات السورية",
+      "kind": "جهة محلية",
+      "description": "قناة Telegram منسوبة إلى محافظة ريف دمشق، بانتظار تأكيد الربط من قناة أو موقع حكومي مباشر.",
+      "status": "قيد التحقق",
+      "platforms": [
+        {
+          "name": "Telegram",
+          "url": "https://t.me/RDamascusGov1"
+        }
+      ]
+    },
+    {
+      "id": "gov-aleppo",
+      "name": "محافظة حلب",
+      "group": "المحافظات السورية",
+      "kind": "جهة محلية",
+      "description": "قناة Telegram منسوبة إلى محافظة حلب، بانتظار تأكيد الربط من قناة أو موقع حكومي مباشر.",
+      "status": "قيد التحقق",
+      "platforms": [
+        {
+          "name": "Telegram",
+          "url": "https://t.me/AleppoGov1"
+        }
+      ]
+    },
+    {
+      "id": "gov-hama",
+      "name": "محافظة حماة",
+      "group": "المحافظات السورية",
+      "kind": "جهة محلية",
+      "description": "قناة Telegram منسوبة إلى محافظة حماة، بانتظار تأكيد الربط من قناة أو موقع حكومي مباشر.",
+      "status": "قيد التحقق",
+      "platforms": [
+        {
+          "name": "Telegram",
+          "url": "https://t.me/HamaGov1"
+        }
+      ]
+    },
+    {
+      "id": "gov-latakia",
+      "name": "محافظة اللاذقية",
+      "group": "المحافظات السورية",
+      "kind": "جهة محلية",
+      "description": "قناة Telegram منسوبة إلى محافظة اللاذقية، بانتظار تأكيد الربط من قناة أو موقع حكومي مباشر.",
+      "status": "قيد التحقق",
+      "platforms": [
+        {
+          "name": "Telegram",
+          "url": "https://t.me/LatakiaGov1"
+        }
+      ]
+    },
+    {
+      "id": "gov-sweida",
+      "name": "محافظة السويداء",
+      "group": "المحافظات السورية",
+      "kind": "جهة محلية",
+      "description": "قناة Telegram منسوبة إلى محافظة السويداء، بانتظار تأكيد الربط من قناة أو موقع حكومي مباشر.",
+      "status": "قيد التحقق",
+      "platforms": [
+        {
+          "name": "Telegram",
+          "url": "https://t.me/SweidaGov1"
+        }
+      ]
+    },
+    {
+      "id": "gov-idlib",
+      "name": "محافظة إدلب",
+      "group": "المحافظات السورية",
+      "kind": "جهة محلية",
+      "description": "قناة Telegram منسوبة إلى محافظة إدلب، بانتظار تأكيد الربط من قناة أو موقع حكومي مباشر.",
+      "status": "قيد التحقق",
+      "platforms": [
+        {
+          "name": "Telegram",
+          "url": "https://t.me/IdlibGov1"
+        }
+      ]
+    },
+    {
+      "id": "gov-tartus",
+      "name": "محافظة طرطوس",
+      "group": "المحافظات السورية",
+      "kind": "جهة محلية",
+      "description": "قناة Telegram منسوبة إلى محافظة طرطوس، بانتظار تأكيد الربط من قناة أو موقع حكومي مباشر.",
+      "status": "قيد التحقق",
+      "platforms": [
+        {
+          "name": "Telegram",
+          "url": "https://t.me/TartusGov1"
+        }
+      ]
+    },
+    {
+      "id": "gov-quneitra",
+      "name": "محافظة القنيطرة",
+      "group": "المحافظات السورية",
+      "kind": "جهة محلية",
+      "description": "قناة Telegram منسوبة إلى محافظة القنيطرة، بانتظار تأكيد الربط من قناة أو موقع حكومي مباشر.",
+      "status": "قيد التحقق",
+      "platforms": [
+        {
+          "name": "Telegram",
+          "url": "https://t.me/QuneitraGov1"
+        }
+      ]
+    },
+    {
+      "id": "gov-daraa",
+      "name": "محافظة درعا",
+      "group": "المحافظات السورية",
+      "kind": "جهة محلية",
+      "description": "قناة Telegram منسوبة إلى محافظة درعا، بانتظار تأكيد الربط من قناة أو موقع حكومي مباشر.",
+      "status": "قيد التحقق",
+      "platforms": [
+        {
+          "name": "Telegram",
+          "url": "https://t.me/DaraaGov1"
+        }
+      ]
+    },
+    {
+      "id": "gov-deir-ezzor",
+      "name": "محافظة دير الزور",
+      "group": "المحافظات السورية",
+      "kind": "جهة محلية",
+      "description": "قناة Telegram منسوبة إلى محافظة دير الزور، بانتظار تأكيد الربط من قناة أو موقع حكومي مباشر.",
+      "status": "قيد التحقق",
+      "platforms": [
+        {
+          "name": "Telegram",
+          "url": "https://t.me/DeirezZorGov1"
+        }
+      ]
+    },
+    {
+      "id": "gov-homs",
+      "name": "محافظة حمص",
+      "group": "المحافظات السورية",
+      "kind": "جهة محلية",
+      "description": "قناة Telegram منسوبة إلى محافظة حمص، بانتظار تأكيد الربط من قناة أو موقع حكومي مباشر.",
+      "status": "قيد التحقق",
+      "platforms": [
+        {
+          "name": "Telegram",
+          "url": "https://t.me/HomsGov1"
+        }
+      ]
+    },
+    {
+      "id": "gov-raqqa",
+      "name": "محافظة الرقة",
+      "group": "المحافظات السورية",
+      "kind": "جهة محلية",
+      "description": "قناة Telegram منسوبة إلى محافظة الرقة، بانتظار تأكيد الربط من قناة أو موقع حكومي مباشر.",
+      "status": "قيد التحقق",
+      "platforms": [
+        {
+          "name": "Telegram",
+          "url": "https://t.me/raqqaaGov1"
+        }
+      ]
+    },
+    {
+      "id": "min-interior",
+      "name": "وزارة الداخلية السورية",
+      "group": "الوزارات والهيئات",
+      "kind": "وزارة حكومية",
+      "description": "قناة الوزارة على Telegram؛ يلزم استكمال روابط المنصات الأخرى بعد التحقق.",
+      "status": "موثق عبر قناة Telegram",
+      "platforms": [
+        {
+          "name": "Telegram",
+          "url": "https://t.me/syrianmoi"
+        },
+        {
+          "name": "X",
+          "url": "https://x.com/syrianmoi"
+        }
+      ]
+    },
+    {
+      "id": "min-health",
+      "name": "وزارة الصحة السورية",
+      "group": "الوزارات والهيئات",
+      "kind": "وزارة حكومية",
+      "description": "قناة الوزارة على Telegram؛ يلزم استكمال روابط المنصات الأخرى بعد التحقق.",
+      "status": "موثق عبر قناة Telegram",
+      "platforms": [
+        {
+          "name": "Telegram",
+          "url": "https://t.me/SyrMOfH"
+        }
+      ]
+    },
+    {
+      "id": "min-finance",
+      "name": "وزارة المالية السورية",
+      "group": "الوزارات والهيئات",
+      "kind": "وزارة حكومية",
+      "description": "قناة الوزارة على Telegram؛ يلزم استكمال روابط المنصات الأخرى بعد التحقق.",
+      "status": "موثق عبر قناة Telegram",
+      "platforms": [
+        {
+          "name": "Telegram",
+          "url": "https://t.me/SyrMOfF"
+        }
+      ]
+    },
+    {
+      "id": "min-economy",
+      "name": "وزارة الاقتصاد والصناعة السورية",
+      "group": "الوزارات والهيئات",
+      "kind": "وزارة حكومية",
+      "description": "قناة الوزارة على Telegram؛ يلزم استكمال روابط المنصات الأخرى بعد التحقق.",
+      "status": "موثق عبر قناة Telegram",
+      "platforms": [
+        {
+          "name": "Telegram",
+          "url": "https://t.me/SyMOEAI"
+        }
+      ]
+    },
+    {
+      "id": "min-energy",
+      "name": "وزارة الطاقة السورية",
+      "group": "الوزارات والهيئات",
+      "kind": "وزارة حكومية",
+      "description": "قناة الوزارة على Telegram؛ يلزم استكمال روابط المنصات الأخرى بعد التحقق.",
+      "status": "موثق عبر قناة Telegram",
+      "platforms": [
+        {
+          "name": "Telegram",
+          "url": "https://t.me/SyrMOfE"
+        }
+      ]
+    },
+    {
+      "id": "min-transport",
+      "name": "وزارة النقل السورية",
+      "group": "الوزارات والهيئات",
+      "kind": "وزارة حكومية",
+      "description": "قناة الوزارة على Telegram؛ يلزم استكمال روابط المنصات الأخرى بعد التحقق.",
+      "status": "موثق عبر قناة Telegram",
+      "platforms": [
+        {
+          "name": "Telegram",
+          "url": "https://t.me/SyrSMOT"
+        }
+      ]
+    },
+    {
+      "id": "min-admin-development",
+      "name": "وزارة التنمية الإدارية السورية",
+      "group": "الوزارات والهيئات",
+      "kind": "وزارة حكومية",
+      "description": "قناة الوزارة على Telegram؛ يلزم استكمال روابط المنصات الأخرى بعد التحقق.",
+      "status": "موثق عبر قناة Telegram",
+      "platforms": [
+        {
+          "name": "Telegram",
+          "url": "https://t.me/SyMOAD"
+        }
+      ]
+    },
+    {
+      "id": "syrian-now-platform",
+      "name": "سوريا الآن",
+      "group": "القنوات العربية والدولية",
+      "kind": "منصة إخبارية سورية",
+      "description": "الحسابات الرسمية لمنصة سوريا الآن.",
+      "status": "موثق عبر دليل المنصة",
+      "platforms": [
+        {
+          "name": "X",
+          "url": "https://x.com/AJSyriaNow"
+        },
+        {
+          "name": "X – الأخبار",
+          "url": "https://x.com/AJSyriaNowN"
+        },
+        {
+          "name": "كل المنصات",
+          "url": "https://linktr.ee/AJSyriaNow"
         }
       ]
     }
